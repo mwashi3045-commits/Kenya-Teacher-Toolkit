@@ -12,12 +12,24 @@ Offline-first KICD/CBE planning prototype for Kenyan teachers.
 ## Features
 
 - Separate grade and subject lists for each band
-- Lesson plan generation
-- Lesson notes generation
-- Scheme of work generation
-- Record of work generation
+- Lesson plan, lesson notes, scheme of work and record of work generation
 - Competency-based report cards using EE, ME, AE and BE levels
+- Timetable generator for every grade band
+- Band-specific timetable defaults: lesson duration, lessons per day, weekly lessons, break timing and subject rotation
 - Print, local draft saving, JSON export and import
+
+## Timetable defaults
+
+The generator uses the following planning defaults sourced from the timetable guidance reviewed for this prototype:
+
+| Band | Periods/day | Period length | Weekly periods |
+| --- | ---: | ---: | ---: |
+| Lower Primary (1–3) | 6 | 30 minutes | 31 |
+| Upper Primary (4–6) | 7 | 35 minutes | 35 |
+| Junior School (7–9) | 8 | 40 minutes | 41 |
+| Senior School (10–12) | 8 | 40 minutes | 40 |
+
+The timetable is a configurable starting point. Schools must verify subject allocations, pathway requirements, breaks, co-curricular activities and current official Ministry/KICD circulars before formal adoption.
 
 ## Run
 
