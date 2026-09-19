@@ -1,1 +1,287 @@
-:root{--ink:#17343b;--muted:#60777b;--teal:#0f766e;--teal-dark:#115e59;--cream:#fffaf1;--line:#dce8e4;--shadow:0 18px 50px #17453b12}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#fff}a{color:inherit;text-decoration:none}.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 max(5vw,24px);border-bottom:1px solid var(--line);background:#fffffff2;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}.brand{display:flex;align-items:center;gap:10px;font-size:12px;line-height:1.1;letter-spacing:.02em}.brand strong{font-size:16px}.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--teal);color:#fff;font-weight:800}.topbar nav{display:flex;gap:28px;color:#4f696d;font-size:14px;font-weight:600}.topbar nav a:hover{color:var(--teal)}.menu-button{display:none;border:0;background:none;font-size:24px;color:var(--teal)}main{overflow:hidden}.hero{background:linear-gradient(115deg,#eef9f5 0%,#f7fbf8 55%,#e7f4f1 100%);padding:78px max(8vw,24px) 82px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:9vw;align-items:center}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:800;color:var(--teal);margin:0 0 11px}.hero h1{font-family:Georgia,serif;font-size:clamp(42px,5vw,72px);line-height:1.04;letter-spacing:-.04em;margin:0 0 20px;max-width:700px}.hero-copy{color:var(--muted);font-size:18px;max-width:590px}.hero-actions,.form-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:28px}.button{border:0;border-radius:8px;padding:12px 18px;font:600 14px inherit;cursor:pointer;display:inline-flex;gap:12px;justify-content:center;align-items:center}.button.primary{background:var(--teal);color:white;box-shadow:0 6px 14px #0f766e2c}.button.primary:hover{background:var(--teal-dark)}.button.ghost{background:white;color:var(--teal);border:1px solid #b8d6d0}.button.small{padding:9px 13px;font-size:12px}.hero-card{background:#fff;border-radius:18px;padding:30px;box-shadow:var(--shadow);transform:rotate(2deg);border-top:5px solid #f3a44c}.hero-card .sun{font-size:28px;color:#f19a3d}.hero-card p{color:#c77b28;text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800}.hero-card strong{display:block;font:22px/1.35 Georgia,serif}.hero-card small{display:block;color:var(--muted);margin-top:26px}.section{max-width:1160px;margin:auto;padding:74px max(24px,3vw)}.section-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:26px}.section h2{font:36px Georgia,serif;letter-spacing:-.03em;margin:0}.saved-status{color:#55816e;font-size:12px}.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.tool-card{border-radius:14px;padding:27px;min-height:245px;border:1px solid transparent;transition:.2s}.tool-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}.tool-card.teal{background:#e8f6f1;border-color:#d4eee6}.tool-card.orange{background:#fff4e6;border-color:#f7e4c7}.tool-card.purple{background:#f1edfa;border-color:#e4dcf6}.icon{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#fff;font-size:21px;color:var(--teal)}.tool-card h3{font-size:21px;margin:22px 0 7px}.tool-card p{color:var(--muted);font-size:14px;margin:0 0 23px}.card-link{font-weight:700;color:var(--teal);font-size:13px}.workspace{padding-top:38px;border-top:1px solid var(--line)}.panel{background:var(--cream);border:1px solid #f0eadb;border-radius:14px;padding:28px;box-shadow:0 4px 20px #8b68400b}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.form-grid label,.calc-inputs label{display:grid;gap:7px;color:#446268;font-size:13px;font-weight:700}.wide{grid-column:1/-1}input,textarea,select{width:100%;font:15px inherit;color:var(--ink);background:#fff;border:1px solid #cfddd8;border-radius:7px;padding:11px 12px;outline:0}input:focus,textarea:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px #0f766e15}textarea{resize:vertical}.calculator{display:flex;align-items:center;gap:45px}.calc-inputs{display:flex;align-items:end;gap:12px;flex:1}.calc-inputs label{flex:1}.slash{font-size:25px;padding-bottom:9px;color:#9aafab}.result{display:flex;gap:17px;align-items:center;min-width:280px}.result>span{font:bold 46px Georgia;color:var(--teal)}.result strong{display:block}.result small{color:var(--muted)}footer{padding:30px max(5vw,24px);border-top:1px solid var(--line);display:flex;justify-content:space-between;color:var(--muted);font-size:13px}footer strong{color:var(--ink)}@media(max-width:720px){.topbar nav{display:none;position:absolute;top:76px;left:0;right:0;padding:18px 24px;background:#fff;border-bottom:1px solid var(--line);flex-direction:column;gap:14px}.topbar nav.open{display:flex}.menu-button{display:block}.hero{grid-template-columns:1fr;padding-top:56px;padding-bottom:60px;gap:40px}.hero-card{transform:none}.tool-grid,.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.section-heading{align-items:start;flex-direction:column}.calculator{align-items:stretch;flex-direction:column;gap:28px}.calc-inputs{flex-wrap:wrap}.calc-inputs .button{width:100%}.result{min-width:0}footer{flex-direction:column;gap:9px}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f766e" />
+  <title>Kenya Teacher Toolkit</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <a class="brand" href="#dashboard" aria-label="Kenya Teacher Toolkit home">
+        <span class="brand-mark">KT</span>
+        <span class="brand-text">Kenya Teacher<br /><strong>Toolkit</strong></span>
+      </a>
+    </div>
+
+    <button class="menu-button" id="menuButton" aria-label="Toggle navigation">☰</button>
+
+    <nav id="mainNav" aria-label="Main navigation">
+      <a href="#dashboard">Dashboard</a>
+      <a href="#lesson-planner">Lesson planner</a>
+      <a href="#assessment">Assessment</a>
+      <a href="#reports">Reports</a>
+      <button class="nav-action" id="exportBtn" type="button">Export</button>
+      <button class="nav-action secondary" id="importBtn" type="button">Import</button>
+      <input id="importInput" type="file" accept="application/json,.json" hidden />
+    </nav>
+  </header>
+
+  <main>
+    <section class="section hero" id="dashboard">
+      <div class="hero-copy-block">
+        <p class="eyebrow">CBC / CBE classroom companion</p>
+        <h1>Teach smarter, plan faster, track progress clearly.</h1>
+        <p>
+          A complete teaching workspace for Kenyan schools, built for lesson planning,
+          continuous assessment, classroom reporting and easy print-outs.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#lesson-planner">Start a lesson</a>
+          <button class="button ghost" id="printDashboard" type="button">Print summary</button>
+        </div>
+      </div>
+
+      <div class="hero-panel">
+        <p class="panel-tag">Today’s focus</p>
+        <h2>Learning outcomes first.</h2>
+        <p>
+          Design activities that help every learner demonstrate understanding and confidence.
+        </p>
+        <ul class="mini-list">
+          <li>Lesson planning</li>
+          <li>Assessment tracking</li>
+          <li>Reports and print-ready summaries</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section stats-section">
+      <div class="stats-grid">
+        <article class="stat-card">
+          <span class="stat-label">Lesson plans</span>
+          <strong id="statLessons">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Assessments</span>
+          <strong id="statAssessments">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Reports</span>
+          <strong id="statReports">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Average score</span>
+          <strong id="statAverage">0%</strong>
+        </article>
+      </div>
+    </section>
+
+    <section id="lesson-planner" class="section workspace-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Tool 01</p>
+          <h2>Lesson planner</h2>
+        </div>
+        <button class="button ghost small" id="clearLessonForm" type="button">Clear form</button>
+      </div>
+
+      <div class="two-column-layout">
+        <form class="panel form-grid" id="lessonForm">
+          <label>
+            Teacher name
+            <input name="teacherName" type="text" placeholder="e.g. Jane Wanjiru" />
+          </label>
+          <label>
+            Grade / class
+            <input name="grade" type="text" placeholder="e.g. Grade 4" required />
+          </label>
+          <label>
+            Learning area
+            <input name="area" type="text" placeholder="e.g. Mathematics" required />
+          </label>
+          <label>
+            Topic / strand
+            <input name="topic" type="text" placeholder="e.g. Fractions" required />
+          </label>
+          <label>
+            Date
+            <input name="date" type="date" />
+          </label>
+          <label>
+            Duration
+            <input name="duration" type="text" placeholder="e.g. 40 minutes" />
+          </label>
+          <label class="full-width">
+            Specific learning outcome
+            <textarea name="outcome" rows="3" placeholder="By the end of the lesson, learners should be able to..." required></textarea>
+          </label>
+          <label class="full-width">
+            Introduction and lesson activities
+            <textarea name="activities" rows="4" placeholder="Starter, group work, discussion, practical activities..." required></textarea>
+          </label>
+          <label class="full-width">
+            Resources and assessment strategy
+            <textarea name="resources" rows="3" placeholder="Textbooks, counters, oral questions, exit ticket, observation checklist..."></textarea>
+          </label>
+
+          <div class="full-width form-actions">
+            <button class="button primary" type="submit">Save lesson plan</button>
+            <button class="button ghost" type="button" id="printLessonForm">Print lesson plan</button>
+          </div>
+        </form>
+
+        <aside class="panel side-panel">
+          <div class="panel-header">
+            <h3>Saved lesson plans</h3>
+            <span id="lessonCountBadge" class="badge">0</span>
+          </div>
+          <div id="lessonPlanList" class="list-stack"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="assessment" class="section workspace-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Tool 02</p>
+          <h2>Assessment tracker</h2>
+        </div>
+        <button class="button ghost small" id="clearAssessmentForm" type="button">Clear form</button>
+      </div>
+
+      <div class="two-column-layout">
+        <form class="panel form-grid" id="assessmentForm">
+          <label>
+            Learner name
+            <input name="learner" type="text" placeholder="e.g. Aisha Njeri" required />
+          </label>
+          <label>
+            Grade / class
+            <input name="grade" type="text" placeholder="e.g. Grade 5" required />
+          </label>
+          <label>
+            Subject / area
+            <input name="subject" type="text" placeholder="e.g. English" required />
+          </label>
+          <label>
+            Assessment type
+            <select name="type">
+              <option>Quiz</option>
+              <option>Test</option>
+              <option>Assignment</option>
+              <option>Project</option>
+              <option>Observation</option>
+            </select>
+          </label>
+          <label>
+            Marks scored
+            <input id="scored" name="scored" type="number" min="0" step="0.1" value="32" required />
+          </label>
+          <label>
+            Total marks
+            <input id="total" name="total" type="number" min="1" step="0.1" value="40" required />
+          </label>
+          <label class="full-width">
+            Teacher comment
+            <textarea name="comment" rows="3" placeholder="Brief note on learner performance or next support..."></textarea>
+          </label>
+
+          <div class="full-width result-box" aria-live="polite">
+            <div>
+              <span class="result-label">Calculated result</span>
+              <strong id="assessmentResult">80%</strong>
+            </div>
+            <div>
+              <span class="result-label">Performance</span>
+              <strong id="performanceLabel">Exceeds expectations</strong>
+            </div>
+          </div>
+
+          <div class="full-width form-actions">
+            <button class="button primary" type="submit">Save assessment</button>
+            <button class="button ghost" type="button" id="calculateAssessment">Calculate</button>
+          </div>
+        </form>
+
+        <aside class="panel side-panel">
+          <div class="panel-header">
+            <h3>Recent assessments</h3>
+            <span id="assessmentCountBadge" class="badge">0</span>
+          </div>
+          <div id="assessmentList" class="list-stack"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="reports" class="section workspace-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Tool 03</p>
+          <h2>Learner report builder</h2>
+        </div>
+        <button class="button ghost small" id="clearReportForm" type="button">Clear form</button>
+      </div>
+
+      <div class="two-column-layout">
+        <form class="panel form-grid" id="reportForm">
+          <label>
+            Learner name
+            <input name="learner" type="text" placeholder="e.g. Kelvin Ochieng" required />
+          </label>
+          <label>
+            Grade / class
+            <input name="grade" type="text" placeholder="e.g. Grade 3" required />
+          </label>
+          <label>
+            Subject / area
+            <input name="subject" type="text" placeholder="e.g. Science" required />
+          </label>
+          <label>
+            Term
+            <select name="term">
+              <option>Term 1</option>
+              <option>Term 2</option>
+              <option>Term 3</option>
+            </select>
+          </label>
+          <label class="full-width">
+            Strengths observed
+            <textarea name="strengths" rows="3" placeholder="What is the learner doing well?"></textarea>
+          </label>
+          <label class="full-width">
+            Next steps / support needed
+            <textarea name="nextSteps" rows="3" placeholder="What should the learner practise next?"></textarea>
+          </label>
+          <label class="full-width">
+            Teacher recommendation
+            <textarea name="recommendation" rows="3" placeholder="A summary for parents / school follow-up..."></textarea>
+          </label>
+
+          <div class="full-width form-actions">
+            <button class="button primary" type="submit">Save report</button>
+            <button class="button ghost" type="button" id="printReportForm">Print report</button>
+          </div>
+        </form>
+
+        <aside class="panel side-panel">
+          <div class="panel-header">
+            <h3>Saved learner reports</h3>
+            <span id="reportCountBadge" class="badge">0</span>
+          </div>
+          <div id="reportList" class="list-stack"></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <strong>Kenya Teacher Toolkit</strong>
+    <span>Built for practical CBC/CBE teaching in Kenya</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
