@@ -1,285 +1,571 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0f766e" />
-    <title>Kenya Teacher Toolkit</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header class="topbar">
-      <div class="brand-box">
-        <div class="brand-mark">KT</div>
-        <div class="brand-copy">
-          Kenya Teacher<br />
-          <strong>Toolkit</strong>
-        </div>
-      </div>
+:root {
+  --ink: #17343b;
+  --muted: #607477;
+  --teal: #0f766e;
+  --dark: #0f172a;
+  --line: #dfeae7;
+  --paper: #fffdf8;
+  --panel: #f4faf8;
+  --gold: #d97706;
+  --danger: #b91c1c;
+  --shadow: 0 10px 28px rgba(13, 30, 38, 0.07);
+}
 
-      <button id="menuButton" class="menu-button" aria-label="Open menu">☰</button>
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: var(--ink);
+  background: #fff;
+}
 
-      <nav id="mainNav">
-        <a href="#dashboard">Dashboard</a>
-        <a href="#planner">Planner</a>
-        <a href="#timetable">Timetable</a>
-        <a href="#students">Students</a>
-        <a href="#analytics">Analytics</a>
-        <button id="exportJson" class="nav-btn" type="button">Export JSON</button>
-        <button id="exportCsv" class="nav-btn" type="button">Export CSV</button>
-      </nav>
-    </header>
+a { color: inherit; text-decoration: none; }
+button, input, textarea, select {
+  font: inherit;
+}
+button { cursor: pointer; }
 
-    <main>
-      <section id="dashboard" class="hero section">
-        <div>
-          <p class="eyebrow">CBC / CBE classroom management</p>
-          <h1>Plan, teach, timetable and track learner progress.</h1>
-          <p>
-            A complete school-ready classroom workspace for Kenya’s curriculum across lower primary,
-            upper primary, junior school and senior school.
-          </p>
-          <div class="hero-actions">
-            <a href="#planner" class="btn primary">Open planner</a>
-            <button id="printAll" class="btn secondary" type="button">Print dashboard</button>
-          </div>
-        </div>
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px clamp(1rem, 2vw, 2rem);
+  background: rgba(255,255,255,0.99);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
 
-        <aside class="hero-card">
-          <small>CURRICULUM BANDS</small>
-          <h2>Four learning phases</h2>
-          <ul>
-            <li>Lower Primary: Grade 1–3</li>
-            <li>Upper Primary: Grade 4–6</li>
-            <li>Junior School: Grade 7–9</li>
-            <li>Senior School: Grade 10–12</li>
-          </ul>
-        </aside>
-      </section>
+.brand-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
 
-      <section class="stats section">
-        <div class="stat-card">
-          <span>Classes</span>
-          <strong id="classCount">0</strong>
-        </div>
-        <div class="stat-card">
-          <span>Learners</span>
-          <strong id="learnerCount">0</strong>
-        </div>
-        <div class="stat-card">
-          <span>Reports</span>
-          <strong id="reportCount">0</strong>
-        </div>
-        <div class="stat-card">
-          <span>Avg. score</span>
-          <strong id="averageScore">0%</strong>
-        </div>
-      </section>
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--teal), #14b8a6);
+  color: white;
+  font-weight: 800;
+}
 
-      <section id="planner" class="section">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Curriculum studio</p>
-            <h2>Generate KICD-aligned classroom documents</h2>
-          </div>
-        </div>
+.brand-copy strong {
+  font-size: 1.1rem;
+  text-transform: none;
+}
 
-        <div id="bandButtons" class="band-buttons"></div>
+#mainNav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
 
-        <form id="curriculumForm" class="panel form-grid">
-          <label>
-            Grade band
-            <select name="band" id="bandSelect">
-              <option value="lower">Lower Primary (Grade 1–3)</option>
-              <option value="upper">Upper Primary (Grade 4–6)</option>
-              <option value="junior">Junior School (Grade 7–9)</option>
-              <option value="senior">Senior School (Grade 10–12)</option>
-            </select>
-          </label>
+#mainNav a, .nav-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+}
 
-          <label>
-            Grade / stream
-            <select name="grade" id="gradeSelect"></select>
-          </label>
+#mainNav a:hover, .nav-btn:hover {
+  background: #edf8f5;
+  color: var(--teal);
+}
 
-          <label>
-            Subject
-            <select name="subject" id="subjectSelect"></select>
-          </label>
+.nav-btn {
+  border: 1px solid var(--line);
+  background: white;
+}
 
-          <label>
-            Term
-            <select name="term">
-              <option>Term 1</option>
-              <option>Term 2</option>
-              <option>Term 3</option>
-            </select>
-          </label>
+.menu-button {
+  display: none;
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  font-size: 1.2rem;
+}
 
-          <label>
-            Week / lesson
-            <input name="week" type="text" placeholder="Week 1 / Lesson 1" />
-          </label>
+.section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem clamp(1rem, 2vw, 2rem);
+}
 
-          <label>
-            Lesson title
-            <input name="title" type="text" placeholder="e.g. Fractions" required />
-          </label>
+.hero {
+  display: grid;
+  grid-template-columns: 1.35fr 0.8fr;
+  gap: 2rem;
+  align-items: center;
+  background: linear-gradient(135deg, #ebfaf5, #f9fbfa);
+  border-radius: 20px;
+  margin-top: 1rem;
+  padding-block: 2.5rem;
+}
 
-          <label>
-            Strand
-            <input name="strand" type="text" placeholder="e.g. Number sense" required />
-          </label>
+.eyebrow {
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  color: var(--teal);
+  font-weight: 800;
+}
 
-          <label>
-            Sub-strand
-            <input name="substrand" type="text" placeholder="e.g. Proper fractions" required />
-          </label>
+.hero h1 {
+  margin: 0 0 1rem;
+  font-family: Georgia, serif;
+  font-size: clamp(2.4rem, 5vw, 4.3rem);
+  line-height: 1.03;
+  letter-spacing: -0.05em;
+}
 
-          <label class="full-width">
-            Learning outcomes
-            <textarea name="outcomes" rows="3" placeholder="By the end of the lesson, learners should be able to..." required></textarea>
-          </label>
+.hero p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
 
-          <label class="full-width">
-            Learning experiences / teaching methods
-            <textarea name="methods" rows="3" placeholder="Group discussion, practical activity, demonstration..."></textarea>
-          </label>
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
 
-          <label>
-            Learning resources
-            <textarea name="resources" rows="2" placeholder="Charts, textbooks, counters, digital tools..."></textarea>
-          </label>
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--teal);
+  padding: 0.8rem 1.1rem;
+  font-weight: 700;
+}
 
-          <label>
-            Assessment evidence
-            <textarea name="assessment" rows="2" placeholder="Observation checklist, oral questions, exit ticket..."></textarea>
-          </label>
+.btn.primary {
+  background: linear-gradient(135deg, var(--teal), #14b8a6);
+  border: none;
+  color: white;
+  box-shadow: 0 8px 20px rgba(15,118,110,0.2);
+}
 
-          <label class="full-width">
-            Differentiation and reflection
-            <textarea name="reflection" rows="2" placeholder="Support strategies, remediation, next steps..."></textarea>
-          </label>
+.btn.secondary {
+  background: #f5fbfa;
+}
 
-          <div class="full-width actions">
-            <button class="btn primary" type="submit">Generate documents</button>
-            <button id="saveDraftBtn" class="btn secondary" type="button">Save draft</button>
-            <button id="printPlanner" class="btn secondary" type="button">Print planner</button>
-          </div>
-        </form>
-      </section>
+.hero-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1.3rem 1.1rem;
+  box-shadow: var(--shadow);
+}
 
-      <section id="timetable" class="section">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Timetable generator</p>
-            <h2>Weekly timetable preview</h2>
-          </div>
-        </div>
+.hero-card small {
+  color: var(--gold);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
 
-        <form id="timetableForm" class="panel form-grid">
-          <label>
-            Grade band
-            <select name="band" id="timetableBand">
-              <option value="lower">Lower Primary (Grade 1–3)</option>
-              <option value="upper">Upper Primary (Grade 4–6)</option>
-              <option value="junior">Junior School (Grade 7–9)</option>
-              <option value="senior">Senior School (Grade 10–12)</option>
-            </select>
-          </label>
+.hero-card h2 {
+  margin: 0.5rem 0 0.7rem;
+  font-size: clamp(1.8rem,3vw,2.5rem);
+  font-family: Georgia, serif;
+}
 
-          <label>
-            First lesson starts
-            <input name="startTime" type="time" value="08:20" />
-          </label>
+.hero-card ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  line-height: 1.9;
+}
 
-          <label>
-            Break after lesson
-            <select name="breakAfter" id="breakAfterSelect"></select>
-          </label>
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
 
-          <label>
-            Break length
-            <select name="breakLength">
-              <option value="20">20 minutes</option>
-              <option value="30" selected>30 minutes</option>
-              <option value="40">40 minutes</option>
-            </select>
-          </label>
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
 
-          <div class="full-width actions">
-            <button class="btn primary" type="submit">Generate timetable</button>
-            <button id="printTimetable" class="btn secondary" type="button">Print timetable</button>
-          </div>
-        </form>
+.stat-card span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 
-        <div id="timetableOutput" class="timetable-output"></div>
-      </section>
+.stat-card strong {
+  font-size: clamp(1.5rem,3vw,2rem);
+}
 
-      <section id="students" class="section">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Learner records</p>
-            <h2>Class lists and learner records</h2>
-          </div>
-        </div>
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
 
-        <div class="student-layout">
-          <div class="panel">
-            <h3>Add class</h3>
-            <form id="classForm" class="stacked-form">
-              <input id="classNameInput" type="text" placeholder="e.g. Grade 5 East" required />
-              <button class="btn primary" type="submit">Add class</button>
-            </form>
+.compact-head {
+  margin-bottom: 0.5rem;
+}
 
-            <h3>Class roster</h3>
-            <div id="classList" class="list-box"></div>
-          </div>
+.section-head h2, .section-head h3 {
+  margin: 0;
+  font-family: Georgia, serif;
+  letter-spacing: -0.04em;
+}
 
-          <div class="panel">
-            <h3>Add learner</h3>
-            <form id="learnerForm" class="stacked-form">
-              <input id="learnerName" type="text" placeholder="Learner name" required />
-              <select id="learnerClassSelect"></select>
-              <input id="learnerScore" type="number" min="0" max="100" placeholder="Score (%)" />
-              <textarea id="learnerNotes" rows="3" placeholder="Notes / strengths / areas for support"></textarea>
-              <button class="btn primary" type="submit">Add learner</button>
-            </form>
+.section-head h2 {
+  font-size: clamp(2rem,3vw,2.8rem);
+}
 
-            <h3>Learner list</h3>
-            <div id="learnerList" class="list-box"></div>
-          </div>
-        </div>
-      </section>
+.section-head h3 {
+  font-size: clamp(1.5rem,2vw,2.1rem);
+}
 
-      <section id="analytics" class="section">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Progress overview</p>
-            <h2>Class analytics</h2>
-          </div>
-        </div>
+.band-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+}
 
-        <div id="analyticsGrid" class="analytics-grid"></div>
-      </section>
+.band-btn {
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  color: var(--muted);
+  font-weight: 700;
+}
 
-      <section class="section">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Document output</p>
-            <h2>Generated classroom documents</h2>
-          </div>
-        </div>
+.band-btn.active {
+  background: rgba(15,118,110,0.08);
+  border-color: rgba(15,118,110,0.2);
+  color: var(--teal);
+}
 
-        <div id="outputGrid" class="output-grid"></div>
-      </section>
-    </main>
+.panel {
+  background: var(--paper);
+  border: 1px solid #efe8d6;
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+}
 
-    <footer>
-      <strong>Kenya Teacher Toolkit</strong>
-      <span>Teacher planning workspace for CBC/CBE schools</span>
-    </footer>
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
 
-    <script src="app.js"></script>
-  </body>
-</html>
+label {
+  display: grid;
+  gap: 0.45rem;
+  color: #406267;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+input, select, textarea {
+  width: 100%;
+  background: white;
+  border: 1px solid #d5e4df;
+  border-radius: 10px;
+  padding: 0.8rem 0.85rem;
+  color: var(--ink);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid rgba(15,118,110,0.15);
+  border-color: rgba(15,118,110,0.6);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.student-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 1rem;
+}
+
+.stacked-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.list-box {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem;
+}
+
+.list-item strong {
+  display: block;
+}
+
+.list-item small {
+  color: var(--muted);
+}
+
+.inline-btn {
+  border: none;
+  background: rgba(185,28,28,0.08);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  font-weight: 700;
+}
+
+.timetable-output {
+  margin-top: 1rem;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.timetable-output table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.timetable-output th, .timetable-output td {
+  border: 1px solid var(--line);
+  padding: 0.75rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.timetable-output th {
+  background: #f2faf7;
+}
+
+.timetable-output td {
+  background: white;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.analytics-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.analytics-card span {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.analytics-card strong {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.output-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.output-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.output-card h3 {
+  margin: 0 0 0.75rem;
+}
+
+.output-card pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f7faf9;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.9rem;
+  font-family: Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 25, 27, 0.7);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+}
+
+.auth-overlay.hidden {
+  display: none;
+}
+
+.auth-modal {
+  width: min(520px, calc(100% - 2rem));
+  padding: 1.4rem;
+}
+
+.school-panel {
+  margin-top: 1rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+
+.summary-grid div {
+  display: grid;
+  gap: 0.35rem;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.8rem;
+}
+
+.summary-grid span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.summary-grid strong {
+  font-size: 1rem;
+}
+
+.ai-panel {
+  margin-top: 1rem;
+}
+
+.ai-output {
+  margin-top: 0.75rem;
+  background: #f3faf7;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+  color: var(--ink);
+  line-height: 1.7;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.25rem clamp(1rem, 2vw, 2rem) 2rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .hero, .student-layout, .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+
+  #mainNav {
+    position: absolute;
+    top: 72px;
+    left: 1rem;
+    right: 1rem;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 0.8rem;
+    box-shadow: var(--shadow);
+  }
+
+  #mainNav.open {
+    display: flex;
+  }
+
+  .menu-button {
+    display: block;
+  }
+}
+
+@media (max-width: 560px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

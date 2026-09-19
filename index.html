@@ -1,8 +1,372 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0f766e"><title>Kenya Teacher Toolkit</title><link rel="stylesheet" href="styles.css"></head>
-<body><header class="topbar"><a class="brand" href="#dashboard"><span class="mark">KT</span><span>Kenya Teacher<br><b>Toolkit</b></span></a><button id="menu" class="menu" aria-label="Menu">☰</button><nav id="nav"><a href="#dashboard">Dashboard</a><a href="#studio">Curriculum studio</a><a href="#report">Report card</a><button id="export" class="navbtn">Export</button><button id="import" class="navbtn">Import</button><input id="file" type="file" accept=".json,application/json" hidden></nav></header>
-<main><section id="dashboard" class="hero"><div><small class="eyebrow">CBC / CBE classroom companion</small><h1>Plan, teach and report with confidence.</h1><p>Generate practical KICD-style lesson documents for every Kenyan grade band and create competency-based report cards.</p><a class="btn primary" href="#studio">Open curriculum studio →</a></div><aside class="tip"><small>FOUR GRADE BANDS</small><h2>Lower, upper, junior and senior school</h2><p>Senior school is configured for Grade 10–12.</p></aside></section>
-<section class="stats"><div><small>Grade bands</small><b>4</b></div><div><small>Senior grades</small><b>3</b></div><div><small>Documents</small><b>4</b></div><div><small>Report levels</small><b>4</b></div></section>
-<section id="studio" class="section"><small class="eyebrow">Curriculum studio</small><h2>Generate teaching documents</h2><div id="bands" class="bands"></div><form id="curriculum" class="panel grid"><label>Grade band<select name="band" id="band"><option value="lower">Lower Primary (Grade 1–3)</option><option value="upper">Upper Primary (Grade 4–6)</option><option value="junior">Junior School (Grade 7–9)</option><option value="senior">Senior School (Grade 10–12)</option></select></label><label>Grade<select name="grade" id="grade"></select></label><label>Subject<select name="subject" id="subject"></select></label><label>Term<select name="term"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></label><label>Week / lesson<input name="week" placeholder="Week 1 / Lesson 1"></label><label>Lesson title<input name="title" required placeholder="e.g. Fractions"></label><label>Strand<input name="strand" required placeholder="Strand"></label><label>Sub-strand<input name="substrand" required placeholder="Sub-strand"></label><label class="wide">Learning outcomes<textarea name="outcomes" required placeholder="By the end of the lesson learners should be able to..."></textarea></label><label class="wide">Learning experiences / methods<textarea name="methods" placeholder="Activities, group work, discussion and practice..."></textarea></label><label>Resources<textarea name="resources" placeholder="Resources and materials"></textarea></label><label>Assessment evidence<textarea name="assessment" placeholder="How will learning be checked?"></textarea></label><label class="wide">Differentiation and reflection<textarea name="reflection" placeholder="Inclusion support and next steps"></textarea></label><div class="wide actions"><button class="btn primary">Generate documents</button><button type="button" id="print" class="btn">Print</button><button type="button" id="save" class="btn">Save draft</button></div></form></section>
-<section id="report" class="section"><small class="eyebrow">Report card studio</small><h2>Competency-based report card</h2><form id="reportForm" class="panel grid"><label>Learner name<input name="learner" required></label><label>Class / stream<input name="className" required></label><label>Term<select name="term"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></label><label>Teacher<input name="teacher"></label><label class="wide">Scores (Subject=Score, separated by commas)<textarea name="scores" placeholder="Mathematics=85, English=72, Science=64"></textarea></label><div class="wide actions"><button class="btn primary">Generate report card</button><button type="button" id="printReport" class="btn">Print report</button></div></form></section>
-<section class="section"><small class="eyebrow">Output</small><h2>Generated documents</h2><div id="output" class="outputs"></div></section></main><footer><b>Kenya Teacher Toolkit</b><span>Offline-first CBC/CBE planning workspace</span></footer><script src="app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>Kenya Teacher Toolkit</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="authOverlay" class="auth-overlay">
+      <div class="auth-modal panel">
+        <p class="eyebrow">Teacher workspace</p>
+        <h2>Sign in to continue</h2>
+        <form id="authForm" class="stacked-form">
+          <label>
+            School name
+            <input name="schoolName" type="text" value="Nairobi Valley Academy" required />
+          </label>
+          <label>
+            Teacher name
+            <input name="teacherName" type="text" value="Grace Wambui" required />
+          </label>
+          <label>
+            Email address
+            <input name="email" type="email" value="teacher@school.ke" required />
+          </label>
+          <label>
+            Phone number
+            <input name="phone" type="tel" value="0712 000 000" required />
+          </label>
+          <label>
+            Region / county
+            <input name="region" type="text" value="Nairobi County" required />
+          </label>
+          <div class="actions">
+            <button class="btn primary" type="submit">Open dashboard</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <div class="brand-box">
+        <div class="brand-mark">KT</div>
+        <div class="brand-copy">
+          Kenya Teacher<br />
+          <strong>Toolkit</strong>
+        </div>
+      </div>
+
+      <button id="menuButton" class="menu-button" aria-label="Open menu">☰</button>
+
+      <nav id="mainNav">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#planner">Planner</a>
+        <a href="#timetable">Timetable</a>
+        <a href="#students">Students</a>
+        <a href="#analytics">Analytics</a>
+        <button id="exportJson" class="nav-btn" type="button">Backup JSON</button>
+        <button id="restoreJson" class="nav-btn" type="button">Restore backup</button>
+        <button id="exportCsv" class="nav-btn" type="button">Export CSV</button>
+        <button id="logoutBtn" class="nav-btn" type="button">Log out</button>
+        <input id="restoreFileInput" type="file" accept="application/json" hidden />
+      </nav>
+    </header>
+
+    <main>
+      <section id="dashboard" class="hero section">
+        <div>
+          <p class="eyebrow">CBC / CBE classroom management</p>
+          <h1>Plan, teach, timetable and track learner progress.</h1>
+          <p>
+            A complete school-ready classroom workspace for Kenya’s curriculum across lower primary,
+            upper primary, junior school and senior school.
+          </p>
+          <div class="hero-actions">
+            <a href="#planner" class="btn primary">Open planner</a>
+            <button id="printAll" class="btn secondary" type="button">Print dashboard</button>
+          </div>
+        </div>
+
+        <aside class="hero-card">
+          <small>CURRICULUM BANDS</small>
+          <h2>Four learning phases</h2>
+          <ul>
+            <li>Lower Primary: Grade 1–3</li>
+            <li>Upper Primary: Grade 4–6</li>
+            <li>Junior School: Grade 7–9</li>
+            <li>Senior School: Grade 10–12</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="stats section">
+        <div class="stat-card">
+          <span>Classes</span>
+          <strong id="classCount">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Learners</span>
+          <strong id="learnerCount">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Reports</span>
+          <strong id="reportCount">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Avg. score</span>
+          <strong id="averageScore">0%</strong>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">School profile</p>
+            <h2>Teacher and school workspace</h2>
+          </div>
+        </div>
+
+        <div class="panel school-panel">
+          <form id="schoolProfileForm" class="form-grid">
+            <label>
+              School name
+              <input id="schoolName" name="schoolName" type="text" required />
+            </label>
+            <label>
+              Teacher name
+              <input id="teacherName" name="teacherName" type="text" required />
+            </label>
+            <label>
+              Email
+              <input id="teacherEmail" name="email" type="email" required />
+            </label>
+            <label>
+              Phone number
+              <input id="teacherPhone" name="phone" type="tel" required />
+            </label>
+            <label class="full-width">
+              Region / county
+              <input id="teacherRegion" name="region" type="text" required />
+            </label>
+            <div class="full-width actions">
+              <button class="btn primary" type="submit">Save profile</button>
+              <button id="printSchoolProfile" class="btn secondary" type="button">Print profile</button>
+            </div>
+          </form>
+          <div id="schoolSummary" class="school-summary"></div>
+        </div>
+      </section>
+
+      <section id="planner" class="section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Curriculum studio</p>
+            <h2>Generate KICD-aligned classroom documents</h2>
+          </div>
+        </div>
+
+        <div id="bandButtons" class="band-buttons"></div>
+
+        <form id="curriculumForm" class="panel form-grid">
+          <label>
+            Grade band
+            <select name="band" id="bandSelect">
+              <option value="lower">Lower Primary (Grade 1–3)</option>
+              <option value="upper">Upper Primary (Grade 4–6)</option>
+              <option value="junior">Junior School (Grade 7–9)</option>
+              <option value="senior">Senior School (Grade 10–12)</option>
+            </select>
+          </label>
+
+          <label>
+            Grade / stream
+            <select name="grade" id="gradeSelect"></select>
+          </label>
+
+          <label>
+            Subject
+            <select name="subject" id="subjectSelect"></select>
+          </label>
+
+          <label>
+            Term
+            <select name="term">
+              <option>Term 1</option>
+              <option>Term 2</option>
+              <option>Term 3</option>
+            </select>
+          </label>
+
+          <label>
+            Week / lesson
+            <input name="week" type="text" placeholder="Week 1 / Lesson 1" />
+          </label>
+
+          <label>
+            Lesson title
+            <input name="title" type="text" placeholder="e.g. Fractions" required />
+          </label>
+
+          <label>
+            Strand
+            <input name="strand" type="text" placeholder="e.g. Number sense" required />
+          </label>
+
+          <label>
+            Sub-strand
+            <input name="substrand" type="text" placeholder="e.g. Proper fractions" required />
+          </label>
+
+          <label class="full-width">
+            Learning outcomes
+            <textarea name="outcomes" rows="3" placeholder="By the end of the lesson, learners should be able to..." required></textarea>
+          </label>
+
+          <label class="full-width">
+            Learning experiences / teaching methods
+            <textarea name="methods" rows="3" placeholder="Group discussion, practical activity, demonstration..."></textarea>
+          </label>
+
+          <label>
+            Learning resources
+            <textarea name="resources" rows="2" placeholder="Charts, textbooks, counters, digital tools..."></textarea>
+          </label>
+
+          <label>
+            Assessment evidence
+            <textarea name="assessment" rows="2" placeholder="Observation checklist, oral questions, exit ticket..."></textarea>
+          </label>
+
+          <label class="full-width">
+            Differentiation and reflection
+            <textarea name="reflection" rows="2" placeholder="Support strategies, remediation, next steps..."></textarea>
+          </label>
+
+          <div class="full-width actions">
+            <button class="btn primary" type="submit">Generate documents</button>
+            <button id="saveDraftBtn" class="btn secondary" type="button">Save draft</button>
+            <button id="printPlanner" class="btn secondary" type="button">Print planner</button>
+          </div>
+        </form>
+
+        <div class="panel ai-panel">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">AI teaching assistant</p>
+              <h3>Lesson support</h3>
+            </div>
+            <button id="generateAiSuggestion" class="btn secondary" type="button">Generate guidance</button>
+          </div>
+          <div id="aiSuggestionOutput" class="ai-output">
+            <p>Select a subject and class, then generate a quick teaching suggestion based on current learner performance.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="timetable" class="section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Timetable generator</p>
+            <h2>Weekly timetable preview</h2>
+          </div>
+        </div>
+
+        <form id="timetableForm" class="panel form-grid">
+          <label>
+            Grade band
+            <select name="band" id="timetableBand">
+              <option value="lower">Lower Primary (Grade 1–3)</option>
+              <option value="upper">Upper Primary (Grade 4–6)</option>
+              <option value="junior">Junior School (Grade 7–9)</option>
+              <option value="senior">Senior School (Grade 10–12)</option>
+            </select>
+          </label>
+
+          <label>
+            First lesson starts
+            <input name="startTime" type="time" value="08:20" />
+          </label>
+
+          <label>
+            Break after lesson
+            <select name="breakAfter" id="breakAfterSelect"></select>
+          </label>
+
+          <label>
+            Break length
+            <select name="breakLength">
+              <option value="20">20 minutes</option>
+              <option value="30" selected>30 minutes</option>
+              <option value="40">40 minutes</option>
+            </select>
+          </label>
+
+          <div class="full-width actions">
+            <button class="btn primary" type="submit">Generate timetable</button>
+            <button id="printTimetable" class="btn secondary" type="button">Print timetable</button>
+          </div>
+        </form>
+
+        <div id="timetableOutput" class="timetable-output"></div>
+      </section>
+
+      <section id="students" class="section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Learner records</p>
+            <h2>Class lists and learner records</h2>
+          </div>
+        </div>
+
+        <div class="student-layout">
+          <div class="panel">
+            <h3>Add class</h3>
+            <form id="classForm" class="stacked-form">
+              <input id="classNameInput" type="text" placeholder="e.g. Grade 5 East" required />
+              <button class="btn primary" type="submit">Add class</button>
+            </form>
+
+            <h3>Class roster</h3>
+            <div id="classList" class="list-box"></div>
+          </div>
+
+          <div class="panel">
+            <h3>Add learner</h3>
+            <form id="learnerForm" class="stacked-form">
+              <input id="learnerName" type="text" placeholder="Learner name" required />
+              <select id="learnerClassSelect"></select>
+              <input id="learnerScore" type="number" min="0" max="100" placeholder="Score (%)" />
+              <textarea id="learnerNotes" rows="3" placeholder="Notes / strengths / areas for support"></textarea>
+              <button class="btn primary" type="submit">Add learner</button>
+            </form>
+
+            <h3>Learner list</h3>
+            <div id="learnerList" class="list-box"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="analytics" class="section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Progress overview</p>
+            <h2>Class analytics</h2>
+          </div>
+        </div>
+
+        <div id="analyticsGrid" class="analytics-grid"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Document output</p>
+            <h2>Generated classroom documents</h2>
+          </div>
+        </div>
+
+        <div id="outputGrid" class="output-grid"></div>
+      </section>
+    </main>
+
+    <footer>
+      <strong>Kenya Teacher Toolkit</strong>
+      <span>Teacher planning workspace for CBC/CBE schools</span>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
