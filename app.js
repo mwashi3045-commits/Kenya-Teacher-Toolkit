@@ -1,26 +1,494 @@
-const curriculum={lower:{label:'Lower Primary (Grade 1–3)',grades:['Grade 1','Grade 2','Grade 3'],subjects:['English Literacy','Kiswahili Literacy','Mathematics','Environmental Activities','Creative Arts','Religious Education','Physical Education']},upper:{label:'Upper Primary (Grade 4–6)',grades:['Grade 4','Grade 5','Grade 6'],subjects:['English','Kiswahili','Mathematics','Science and Technology','Social Studies','Agriculture','Creative Arts and Sports','Religious Education']},junior:{label:'Junior School (Grade 7–9)',grades:['Grade 7','Grade 8','Grade 9'],subjects:['English','Kiswahili','Mathematics','Integrated Science','Social Studies','Pre-Technical Studies','Agriculture','Business Studies','Creative Arts and Sports','Religious Education']},senior:{label:'Senior School (Grade 10–12)',grades:['Grade 10','Grade 11','Grade 12'],subjects:['English','Kiswahili','Mathematics','Biology','Chemistry','Physics','Geography','History and Citizenship','Business Studies','Agriculture','Computer Science','Economics','Literature','Religious Education']}};
-const timetableConfig={lower:{lessonsPerDay:6,minutes:30,weeklyLessons:31,subjects:['Mathematics','English Literacy','Kiswahili Literacy','Environmental Activities','Creative Arts','Physical Education','Religious Education','PPI']},upper:{lessonsPerDay:7,minutes:35,weeklyLessons:35,subjects:['Mathematics','English','Kiswahili','Science and Technology','Social Studies','Agriculture','Creative Arts and Sports','Religious Education','PPI']},junior:{lessonsPerDay:8,minutes:40,weeklyLessons:41,subjects:['Mathematics','English','Kiswahili','Integrated Science','Social Studies','Pre-Technical Studies','Agriculture','Business Studies','Creative Arts and Sports','Religious Education','PPI']},senior:{lessonsPerDay:8,minutes:40,weeklyLessons:40,subjects:['Mathematics','English','Kiswahili','Biology','Chemistry','Physics','Humanities / Pathway Subject','Business Studies','Computer Science','PE / Clubs','PPI']}};
-const $=s=>document.querySelector(s), state={drafts:JSON.parse(localStorage.getItem('ktt:drafts')||'[]')};
-function fillBand(key){const d=curriculum[key];$('#band').value=key;$('#grade').innerHTML=d.grades.map(x=>`<option>${x}</option>`).join('');$('#subject').innerHTML=d.subjects.map(x=>`<option>${x}</option>`).join('');document.querySelectorAll('.band').forEach(x=>x.classList.toggle('active',x.dataset.band===key));if(window.renderTimetableForm)window.renderTimetableForm(key)}
-function setupBands(){Object.entries(curriculum).forEach(([key,d])=>{const b=document.createElement('button');b.type='button';b.className='band';b.dataset.band=key;b.textContent=d.label;b.onclick=()=>fillBand(key);$('#bands').append(b)});fillBand('lower');$('#band').onchange=e=>fillBand(e.target.value)}
-function val(d,k,f='Not provided'){return d[k]?.trim()||f}
-function lesson(d){return `LESSON PLAN\n==============================\nGrade: ${val(d,'grade')}\nSubject: ${val(d,'subject')}\nTerm: ${val(d,'term')}\nWeek: ${val(d,'week')}\nLesson title: ${val(d,'title')}\nStrand: ${val(d,'strand')}\nSub-strand: ${val(d,'substrand')}\n\nLearning outcomes\n${val(d,'outcomes')}\n\nLearning experiences\n${val(d,'methods')}\n\nResources\n${val(d,'resources')}\n\nAssessment evidence\n${val(d,'assessment')}\n\nDifferentiation / reflection\n${val(d,'reflection')}`}
-function notes(d){return `LESSON NOTES\n==============================\n${val(d,'grade')} | ${val(d,'subject')} | ${val(d,'title')}\n\nOutcome:\n${val(d,'outcomes')}\n\nTeacher-guided and learner-centred activities:\n${val(d,'methods')}\n\nResources:\n${val(d,'resources')}\n\nAssessment and reflection:\n${val(d,'assessment')}\n${val(d,'reflection')}`}
-function scheme(d){return `SCHEME OF WORK\n==============================\nGrade: ${val(d,'grade')}\nSubject: ${val(d,'subject')}\nTerm: ${val(d,'term')}\n\nWeek | Strand | Sub-strand | Learning outcome | Activities | Resources | Assessment\n${val(d,'week')} | ${val(d,'strand')} | ${val(d,'substrand')} | ${val(d,'outcomes')} | ${val(d,'methods')} | ${val(d,'resources')} | ${val(d,'assessment')}`}
-function record(d){return `RECORD OF WORK\n==============================\nGrade: ${val(d,'grade')} | Subject: ${val(d,'subject')} | Term: ${val(d,'term')}\nWeek: ${val(d,'week')}\nContent covered: ${val(d,'title')}\nStrand: ${val(d,'strand')}\nEvidence / remarks: ${val(d,'assessment')}\nReflection: ${val(d,'reflection')}`}
-function level(n){n=Number(n);return n>=80?'EE — Exceeding Expectation':n>=60?'ME — Meeting Expectation':n>=40?'AE — Approaching Expectation':'BE — Below Expectation'}
-function report(d){const rows=(d.scores||'').split(',').map(x=>x.trim()).filter(Boolean).map(x=>{const [s,n]=x.split('=').map(y=>y.trim());return s&&n!==undefined?`${s}: ${n}/100 — ${level(n)}`:null}).filter(Boolean);return `REPORT CARD\n==============================\nLearner: ${val(d,'learner')}\nClass: ${val(d,'className')}\nTerm: ${val(d,'term')}\nTeacher: ${val(d,'teacher')}\n\nPerformance levels\nEE = Exceeding Expectation\nME = Meeting Expectation\nAE = Approaching Expectation\nBE = Below Expectation\n\n${rows.join('\n')||'No subject scores entered.'}`}
-function esc(x){return x.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')}
-function render(d,rd={}){$('#output').innerHTML=[['Lesson plan',lesson(d)],['Lesson notes',notes(d)],['Scheme of work',scheme(d)],['Record of work',record(d)],['Report card',report(rd)]].map(([h,c])=>`<article class="output"><h3>${h}</h3><pre>${esc(c)}</pre></article>`).join('')}
+:root {
+  --ink: #17343b;
+  --muted: #607477;
+  --teal: #0f766e;
+  --dark: #0f172a;
+  --line: #dfeae7;
+  --paper: #fffdf8;
+  --panel: #f4faf8;
+  --gold: #d97706;
+  --danger: #b91c1c;
+  --shadow: 0 10px 28px rgba(13, 30, 38, 0.07);
+}
 
-function parseTime(value){const match=/^(\d{1,2}):(\d{2})$/.exec(value);if(!match)return 8*60+20;return Number(match[1])*60+Number(match[2])}
-function clock(minutes){const hour=Math.floor(minutes/60),minute=String(minutes%60).padStart(2,'0');return `${String(hour).padStart(2,'0')}:${minute}`}
-function timetableSlots(key,start,breakAfter,breakMinutes){const config=timetableConfig[key],slots=[],current=parseTime(start);for(let i=0;i<config.lessonsPerDay;i++){const offset=i>=breakAfter?breakMinutes:0;const begin=current+i*config.minutes+offset;slots.push({label:`Lesson ${i+1}`,time:`${clock(begin)}–${clock(begin+config.minutes)}`})}return slots}
-function timetableRows(key,start,breakAfter,breakMinutes){const config=timetableConfig[key],slots=timetableSlots(key,start,breakAfter,breakMinutes),days=['Monday','Tuesday','Wednesday','Thursday','Friday'],subjects=config.subjects;return days.map((day,dayIndex)=>({day,cells:slots.map((slot,index)=>subjects[(dayIndex*2+index)%subjects.length])}))}
-function timetableMarkup(rows,slots){return `<div class="timetable-wrap"><table class="timetable"><thead><tr><th>Day</th>${slots.map(s=>`<th>${s.label}<small>${s.time}</small></th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr><th>${row.day}</th>${row.cells.map(subject=>`<td>${subject}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
-function renderTimetableForm(key){const select=$('#timetableBand');if(!select)return;select.value=key;const config=timetableConfig[key];$('#lessonCount').textContent=`${config.lessonsPerDay} lessons/day · ${config.minutes} minutes · approximately ${config.weeklyLessons} lessons/week`}
-function buildTimetableSection(){const section=document.createElement('section');section.id='timetable';section.className='section timetable-section';section.innerHTML=`<small class="eyebrow">Tool 05 · Timetable generator</small><h2>Generate a weekly timetable</h2><p class="muted">The defaults follow the published CBE timetable guidance currently used by this prototype. Confirm local school, pathway and county instructions before adoption.</p><form id="timetableForm" class="panel grid"><label>Grade band<select name="band" id="timetableBand"><option value="lower">Lower Primary (Grade 1–3)</option><option value="upper">Upper Primary (Grade 4–6)</option><option value="junior">Junior School (Grade 7–9)</option><option value="senior">Senior School (Grade 10–12)</option></select></label><label>First lesson starts<input name="start" type="time" value="08:20"></label><label>Break after lesson<select name="breakAfter" id="breakAfter"></select></label><label>Break length<select name="breakMinutes"><option value="20">20 minutes</option><option value="30" selected>30 minutes</option><option value="40">40 minutes</option></select></label><div class="wide timetable-meta"><strong id="lessonCount"></strong><span>Includes a PPI slot where applicable. Edit the generated table to match your school’s approved subject allocation.</span></div><div class="wide actions"><button class="btn primary" type="submit">Generate timetable</button><button class="btn" type="button" id="printTimetable">Print timetable</button></div></form><div id="timetableOutput" class="timetable-output"></div>`;document.querySelector('main').insertBefore(section,document.querySelector('#report'));const form=$('#timetableForm');form.addEventListener('submit',e=>{e.preventDefault();generateTimetable()});$('#printTimetable').onclick=()=>window.print();$('#timetableBand').onchange=e=>renderTimetableForm(e.target.value);renderTimetableForm(key);generateTimetable()}
-function generateTimetable(){const data=Object.fromEntries(new FormData($('#timetableForm'))),key=data.band,config=timetableConfig[key],breakAfter=Math.max(1,Math.min(config.lessonsPerDay-1,Number(data.breakAfter)||3)),slots=timetableSlots(key,data.start,breakAfter,Number(data.breakMinutes)||30),rows=timetableRows(key,data.start,breakAfter,Number(data.breakMinutes)||30);$('#breakAfter').innerHTML=Array.from({length:config.lessonsPerDay-1},(_,i)=>`<option value="${i+1}" ${i+1===breakAfter?'selected':''}>After lesson ${i+1}</option>`).join('');$('#timetableOutput').innerHTML=`<div class="generated-heading"><h3>${curriculum[key].label} timetable</h3><span>${config.weeklyLessons} recommended lessons/week · ${config.minutes}-minute periods</span></div>${timetableMarkup(rows,slots)}<p class="timetable-note">Planning note: lesson counts and subject distribution are starting defaults, not a substitute for the latest official KICD/MoE circular or the school’s approved timetable.</p>`}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: var(--ink);
+  background: #fff;
+}
 
-if($('#curriculum')){$('#curriculum').onsubmit=e=>{e.preventDefault();render(Object.fromEntries(new FormData(e.target)),Object.fromEntries(new FormData($('#reportForm'))))};$('#reportForm').onsubmit=e=>{e.preventDefault();render(Object.fromEntries(new FormData($('#curriculum'))),Object.fromEntries(new FormData(e.target)))};$('#save').onclick=()=>{state.drafts.push(Object.fromEntries(new FormData($('#curriculum'))));localStorage.setItem('ktt:drafts',JSON.stringify(state.drafts));alert('Draft saved on this device.')};$('#print').onclick=()=>window.print();$('#printReport').onclick=()=>window.print();$('#menu').onclick=()=>$('#nav').classList.toggle('open');$('#export').onclick=()=>{const blob=new Blob([JSON.stringify({curriculum:Object.fromEntries(new FormData($('#curriculum'))),report:Object.fromEntries(new FormData($('#reportForm'))),drafts:state.drafts},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kenya-teacher-toolkit.json';a.click()};$('#import').onclick=()=>$('#file').click();$('#file').onchange=e=>{const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result),d=x.curriculum||x.data?.curriculum||{};Object.entries(d).forEach(([k,v])=>{if($('#curriculum').elements[k])$('#curriculum').elements[k].value=v});fillBand($('#band').value);alert('Workspace imported.')}catch{alert('Invalid toolkit export file.')}};if(e.target.files[0])r.readAsText(e.target.files[0])};setupBands();render(Object.fromEntries(new FormData($('#curriculum'))),{});buildTimetableSection()}
-window.KenyaTeacherToolkit={curriculum,timetableConfig,level,lesson,scheme,timetableSlots,timetableRows};
+a { color: inherit; text-decoration: none; }
+button, input, textarea, select {
+  font: inherit;
+}
+button { cursor: pointer; }
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px clamp(1rem, 2vw, 2rem);
+  background: rgba(255,255,255,0.99);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+
+.brand-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--teal), #14b8a6);
+  color: white;
+  font-weight: 800;
+}
+
+.brand-copy strong {
+  font-size: 1.1rem;
+  text-transform: none;
+}
+
+#mainNav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#mainNav a, .nav-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+}
+
+#mainNav a:hover, .nav-btn:hover {
+  background: #edf8f5;
+  color: var(--teal);
+}
+
+.nav-btn {
+  border: 1px solid var(--line);
+  background: white;
+}
+
+.menu-button {
+  display: none;
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  font-size: 1.2rem;
+}
+
+.section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem clamp(1rem, 2vw, 2rem);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.35fr 0.8fr;
+  gap: 2rem;
+  align-items: center;
+  background: linear-gradient(135deg, #ebfaf5, #f9fbfa);
+  border-radius: 20px;
+  margin-top: 1rem;
+  padding-block: 2.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  color: var(--teal);
+  font-weight: 800;
+}
+
+.hero h1 {
+  margin: 0 0 1rem;
+  font-family: Georgia, serif;
+  font-size: clamp(2.4rem, 5vw, 4.3rem);
+  line-height: 1.03;
+  letter-spacing: -0.05em;
+}
+
+.hero p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--teal);
+  padding: 0.8rem 1.1rem;
+  font-weight: 700;
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, var(--teal), #14b8a6);
+  border: none;
+  color: white;
+  box-shadow: 0 8px 20px rgba(15,118,110,0.2);
+}
+
+.btn.secondary {
+  background: #f5fbfa;
+}
+
+.hero-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1.3rem 1.1rem;
+  box-shadow: var(--shadow);
+}
+
+.hero-card small {
+  color: var(--gold);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.hero-card h2 {
+  margin: 0.5rem 0 0.7rem;
+  font-size: clamp(1.8rem,3vw,2.5rem);
+  font-family: Georgia, serif;
+}
+
+.hero-card ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.stat-card span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stat-card strong {
+  font-size: clamp(1.5rem,3vw,2rem);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: clamp(2rem,3vw,2.8rem);
+  letter-spacing: -0.04em;
+}
+
+.band-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+}
+
+.band-btn {
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.band-btn.active {
+  background: rgba(15,118,110,0.08);
+  border-color: rgba(15,118,110,0.2);
+  color: var(--teal);
+}
+
+.panel {
+  background: var(--paper);
+  border: 1px solid #efe8d6;
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.45rem;
+  color: #406267;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+input, select, textarea {
+  width: 100%;
+  background: white;
+  border: 1px solid #d5e4df;
+  border-radius: 10px;
+  padding: 0.8rem 0.85rem;
+  color: var(--ink);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid rgba(15,118,110,0.15);
+  border-color: rgba(15,118,110,0.6);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.student-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 1rem;
+}
+
+.stacked-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.list-box {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem;
+}
+
+.list-item strong {
+  display: block;
+}
+
+.list-item small {
+  color: var(--muted);
+}
+
+.inline-btn {
+  border: none;
+  background: rgba(185,28,28,0.08);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  font-weight: 700;
+}
+
+.timetable-output {
+  margin-top: 1rem;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.timetable-output table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.timetable-output th, .timetable-output td {
+  border: 1px solid var(--line);
+  padding: 0.75rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.timetable-output th {
+  background: #f2faf7;
+}
+
+.timetable-output td {
+  background: white;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.analytics-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.analytics-card span {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.analytics-card strong {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.output-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.output-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.output-card h3 {
+  margin: 0 0 0.75rem;
+}
+
+.output-card pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f7faf9;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.9rem;
+  font-family: Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.25rem clamp(1rem, 2vw, 2rem) 2rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .hero, .student-layout, .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+
+  #mainNav {
+    position: absolute;
+    top: 72px;
+    left: 1rem;
+    right: 1rem;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 0.8rem;
+    box-shadow: var(--shadow);
+  }
+
+  #mainNav.open {
+    display: flex;
+  }
+
+  .menu-button {
+    display: block;
+  }
+}
+
+@media (max-width: 560px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
