@@ -1,20 +1,70 @@
-const STORAGE_KEY = 'kenya-teacher-toolkit:v1';
-const defaultState = {
-  lessons: [],
-  assessments: [],
-  reports: []
+const curriculumData = {
+  lowerPrimary: {
+    grades: ['Grade 1', 'Grade 2', 'Grade 3'],
+    subjects: [
+      'English Literacy', 'Kiswahili Literacy', 'Mathematics', 'Environmental Activities',
+      'Religious Education', 'Creative Arts', 'Physical Education', 'Life Skills'
+    ],
+    performanceLevels: [
+      { code: 'EE', label: 'Exceeding Expectation', descriptor: 'Demonstrates strong mastery and applies concepts beyond expected level.' },
+      { code: 'ME', label: 'Meeting Expectation', descriptor: 'Consistently meets the expected standard for the competency.' },
+      { code: 'AE', label: 'Approaching Expectation', descriptor: 'Shows emerging understanding with some support.' },
+      { code: 'BE', label: 'Below Expectation', descriptor: 'Requires more support and frequent guidance.' }
+    ]
+  },
+  upperPrimary: {
+    grades: ['Grade 4', 'Grade 5', 'Grade 6'],
+    subjects: [
+      'Mathematics', 'English', 'Kiswahili', 'Science', 'Social Studies', 'Agriculture',
+      'ICT', 'Religious Education', 'Home Science', 'Physical Education'
+    ],
+    performanceLevels: [
+      { code: 'EE', label: 'Exceeding Expectation', descriptor: 'Confidently applies skills with depth and independence.' },
+      { code: 'ME', label: 'Meeting Expectation', descriptor: 'Meets the curriculum benchmark consistently.' },
+      { code: 'AE', label: 'Approaching Expectation', descriptor: 'Progressing but still requires guided practice.' },
+      { code: 'BE', label: 'Below Expectation', descriptor: 'Needs structured remediation and support.' }
+    ]
+  },
+  juniorSchool: {
+    grades: ['Grade 7', 'Grade 8', 'Grade 9'],
+    subjects: [
+      'Mathematics', 'English', 'Kiswahili', 'Biology', 'Chemistry', 'Physics',
+      'Geography', 'History & Government', 'Business Studies', 'Agriculture',
+      'Computer Studies', 'Religious Education', 'Home Science', 'Physical Education'
+    ],
+    performanceLevels: [
+      { code: 'EE', label: 'Exceeding Expectation', descriptor: 'Applies concepts with precision and demonstrates leadership in learning.' },
+      { code: 'ME', label: 'Meeting Expectation', descriptor: 'Shows secure understanding of expected competencies.' },
+      { code: 'AE', label: 'Approaching Expectation', descriptor: 'Needs more reinforcement to meet curriculum targets.' },
+      { code: 'BE', label: 'Below Expectation', descriptor: 'Requires intervention and targeted support.' }
+    ]
+  },
+  seniorSchool: {
+    grades: ['Grade 10', 'Grade 11', 'Grade 12', 'Grade 13'],
+    subjects: [
+      'Mathematics', 'English', 'Kiswahili', 'Biology', 'Chemistry', 'Physics',
+      'Geography', 'History', 'Economics', 'Business Studies', 'Agriculture',
+      'Computer Science', 'Accounting', 'Literature', 'Religious Education', 'Home Science'
+    ],
+    performanceLevels: [
+      { code: 'EE', label: 'Exceeding Expectation', descriptor: 'Demonstrates advanced understanding and synthesis of knowledge.' },
+      { code: 'ME', label: 'Meeting Expectation', descriptor: 'Consistently meets established competency standards.' },
+      { code: 'AE', label: 'Approaching Expectation', descriptor: 'Shows partial understanding with need for guided development.' },
+      { code: 'BE', label: 'Below Expectation', descriptor: 'Requires intensive support and re-teaching.' }
+    ]
+  }
 };
 
 const state = loadState();
-const $ = (selector) => document.querySelector(selector);
+const STORAGE_KEY = 'kenya-teacher-toolkit:v2';
 
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return structuredClone(defaultState);
-    return { ...defaultState, ...JSON.parse(raw) };
+    if (!raw) return { drafts: [] };
+    return JSON.parse(raw);
   } catch {
-    return structuredClone(defaultState);
+    return { drafts: [] };
   }
 }
 
@@ -22,301 +72,237 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function calculatePercentage(scored, total) {
-  const numericScored = Number(scored);
-  const numericTotal = Number(total);
-
-  if (!Number.isFinite(numericScored) || !Number.isFinite(numericTotal) || numericTotal <= 0 || numericScored < 0) {
-    return { valid: false, percentage: 0 };
-  }
-
-  const percentage = Math.max(0, Math.min(100, (numericScored / numericTotal) * 100));
-  return { valid: true, percentage };
+function updateSubjectCount() {
+  const count = Object.values(curriculumData).reduce((sum, band) => sum + band.subjects.length, 0);
+  document.getElementById('subjectCount').textContent = String(count);
 }
 
-function getPerformanceLabel(percentage) {
-  if (percentage >= 75) return 'Exceeds expectations';
-  if (percentage >= 50) return 'Meets expectations';
-  return 'Needs more support';
+function getSelectedBand() {
+  const active = document.querySelector('.band-button.active');
+  return active ? active.dataset.band : 'lowerPrimary';
 }
 
-function formatDate(value) {
-  if (!value) return 'No date';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat('en-KE', { dateStyle: 'medium' }).format(date);
+function populateSubjects(selectedBand = 'lowerPrimary') {
+  const subjectSelect = document.getElementById('subjectSelect');
+  const subjects = curriculumData[selectedBand].subjects;
+
+  subjectSelect.innerHTML = subjects.map((subject) => `<option value="${subject}">${subject}</option>`).join('');
+  subjectSelect.value = subjects[0];
 }
 
-function updateStats() {
-  const lessons = state.lessons.length;
-  const assessments = state.assessments.length;
-  const reports = state.reports.length;
+function buildBandSelector() {
+  const container = document.getElementById('bandSelector');
+  // create 4 grade band buttons
+  Object.entries(curriculumData).forEach(([bandName, bandInfo]) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'band-button active';
+    if (bandName !== 'lowerPrimary') button.classList.remove('active');
+    button.dataset.band = bandName;
+    button.textContent = bandInfo.grades[0] + '–' + bandInfo.grades[bandInfo.grades.length - 1];
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.band-button').forEach((btn) => btn.classList.remove('active'));
+      button.classList.add('active');
+      const currentBand = button.dataset.band;
+      document.getElementById('gradeBand').value = currentBand;
+      populateSubjects(currentBand);
+    });
+    container.appendChild(button);
+  });
 
-  const averageScore = (() => {
-    if (!state.assessments.length) return 0;
-    const total = state.assessments.reduce((sum, item) => {
-      const result = calculatePercentage(item.scored, item.total);
-      return sum + (result.valid ? result.percentage : 0);
-    }, 0);
-    return Math.round(total / state.assessments.length);
-  })();
-
-  $('#statLessons').textContent = String(lessons);
-  $('#statAssessments').textContent = String(assessments);
-  $('#statReports').textContent = String(reports);
-  $('#statAverage').textContent = `${averageScore}%`;
-  $('#lessonCountBadge').textContent = String(lessons);
-  $('#assessmentCountBadge').textContent = String(assessments);
-  $('#reportCountBadge').textContent = String(reports);
-}
-
-function createLessonListItem(lesson) {
-  const item = document.createElement('article');
-  item.className = 'list-item';
-  item.innerHTML = `
-    <h4>${lesson.topic || 'Untitled lesson'}</h4>
-    <p>${lesson.area || 'No learning area'} · ${lesson.grade || 'No grade'}</p>
-    <p>${lesson.outcome || 'No learning outcome yet.'}</p>
-    <div class="meta-row">
-      <span class="tag">${formatDate(lesson.date)}</span>
-      <span>${lesson.duration || 'Duration not set'}</span>
-    </div>
-    <div class="item-actions">
-      <button class="icon-button" type="button" data-edit-lesson="${lesson.id}">Edit</button>
-      <button class="icon-button delete" type="button" data-delete-lesson="${lesson.id}">Delete</button>
-    </div>
-  `;
-  return item;
-}
-
-function createAssessmentListItem(assessment) {
-  const result = calculatePercentage(assessment.scored, assessment.total);
-  const percent = result.valid ? `${Math.round(result.percentage)}%` : '—';
-  const performance = result.valid ? getPerformanceLabel(result.percentage) : 'Check marks';
-
-  const item = document.createElement('article');
-  item.className = 'list-item';
-  item.innerHTML = `
-    <h4>${assessment.learner || 'Unnamed learner'}</h4>
-    <p>${assessment.subject || 'No subject'} · ${assessment.type || 'Assessment'}</p>
-    <p>${assessment.grade || 'No grade'} · ${assessment.scored || 0}/${assessment.total || 0} marks</p>
-    <div class="meta-row">
-      <span class="tag">${percent}</span>
-      <span>${performance}</span>
-    </div>
-    <div class="item-actions">
-      <button class="icon-button" type="button" data-edit-assessment="${assessment.id}">Edit</button>
-      <button class="icon-button delete" type="button" data-delete-assessment="${assessment.id}">Delete</button>
-    </div>
-  `;
-  return item;
-}
-
-function createReportListItem(report) {
-  const item = document.createElement('article');
-  item.className = 'list-item';
-  item.innerHTML = `
-    <h4>${report.learner || 'Unnamed learner'}</h4>
-    <p>${report.subject || 'No subject'} · ${report.grade || 'No grade'} · ${report.term || 'Term'}</p>
-    <p>${report.strengths || 'No strengths noted yet.'}</p>
-    <div class="meta-row">
-      <span class="tag">${report.term || 'Term'}</span>
-      <span>Report</span>
-    </div>
-    <div class="item-actions">
-      <button class="icon-button" type="button" data-edit-report="${report.id}">Edit</button>
-      <button class="icon-button delete" type="button" data-delete-report="${report.id}">Delete</button>
-    </div>
-  `;
-  return item;
-}
-
-function renderLists() {
-  const lessonList = $('#lessonPlanList');
-  const assessmentList = $('#assessmentList');
-  const reportList = $('#reportList');
-
-  lessonList.innerHTML = '';
-  state.lessons.forEach((lesson) => lessonList.appendChild(createLessonListItem(lesson)));
-
-  assessmentList.innerHTML = '';
-  state.assessments.forEach((assessment) => assessmentList.appendChild(createAssessmentListItem(assessment)));
-
-  reportList.innerHTML = '';
-  state.reports.forEach((report) => reportList.appendChild(createReportListItem(report)));
-
-  if (!state.lessons.length) lessonList.innerHTML = '<p class="empty-state">No lesson plans saved yet.</p>';
-  if (!state.assessments.length) assessmentList.innerHTML = '<p class="empty-state">No assessments saved yet.</p>';
-  if (!state.reports.length) reportList.innerHTML = '<p class="empty-state">No learner reports saved yet.</p>';
-}
-
-function updateAssessmentPreview() {
-  const scored = $('#scored');
-  const total = $('#total');
-  const resultEl = $('#assessmentResult');
-  const performanceEl = $('#performanceLabel');
-
-  if (!scored || !total) return;
-
-  const result = calculatePercentage(scored.value, total.value);
-  const percentage = result.valid ? `${Math.round(result.percentage)}%` : '—';
-  resultEl.textContent = percentage;
-  performanceEl.textContent = result.valid ? getPerformanceLabel(result.percentage) : 'Enter valid marks';
-}
-
-function syncForm(formId, data) {
-  const form = document.getElementById(formId);
-  if (!form) return;
-  Object.entries(data).forEach(([key, value]) => {
-    const field = form.elements.namedItem(key);
-    if (field) field.value = value;
+  const bandSelect = document.getElementById('gradeBand');
+  bandSelect.addEventListener('change', (event) => {
+    const selected = event.target.value;
+    document.querySelectorAll('.band-button').forEach((btn) => btn.classList.toggle('active', btn.dataset.band === selected));
+    populateSubjects(selected);
   });
 }
 
-function saveLesson(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const data = Object.fromEntries(new FormData(form).entries());
-
-  const entry = {
-    id: data.id || crypto.randomUUID(),
-    ...data,
-    date: data.date || new Date().toISOString().slice(0, 10)
-  };
-
-  const index = state.lessons.findIndex((item) => item.id === entry.id);
-  if (index >= 0) state.lessons[index] = entry;
-  else state.lessons.unshift(entry);
-
-  saveState();
-  renderDashboard();
-  renderLists();
-  form.reset();
-  form.removeAttribute('data-edit-id');
-  alert('Lesson plan saved successfully.');
-}
-
-function saveAssessment(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const data = Object.fromEntries(new FormData(form).entries());
-  const result = calculatePercentage(data.scored, data.total);
-
-  if (!result.valid) {
-    alert('Please enter valid marks. Total marks must be greater than zero and marks scored cannot be negative.');
-    return;
+function calculatePerformance(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric < 0 || numeric > 100) {
+    return { code: 'BE', label: 'Below Expectation', score: 0 };
   }
-
-  const entry = {
-    id: data.id || crypto.randomUUID(),
-    ...data,
-    scored: Number(data.scored),
-    total: Number(data.total)
-  };
-
-  const index = state.assessments.findIndex((item) => item.id === entry.id);
-  if (index >= 0) state.assessments[index] = entry;
-  else state.assessments.unshift(entry);
-
-  saveState();
-  renderDashboard();
-  renderLists();
-  form.reset();
-  $('#scored').value = '32';
-  $('#total').value = '40';
-  updateAssessmentPreview();
-  alert('Assessment saved successfully.');
+  if (numeric >= 80) return { code: 'EE', label: 'Exceeding Expectation', score: numeric };
+  if (numeric >= 60) return { code: 'ME', label: 'Meeting Expectation', score: numeric };
+  if (numeric >= 40) return { code: 'AE', label: 'Approaching Expectation', score: numeric };
+  return { code: 'BE', label: 'Below Expectation', score: numeric };
 }
 
-function saveReport(event) {
+function trimValue(value) {
+  return value ? String(value).trim() : '';
+}
+
+function buildLessonPlan(data) {
+  const subject = trimValue(data.subject) || 'Subject';
+  const className = trimValue(data.className) || 'Class';
+  const term = trimValue(data.term) || 'Term';
+  const week = trimValue(data.week) || 'Week';
+  const title = trimValue(data.lessonTitle) || 'Lesson';
+  const strand = trimValue(data.strand) || 'Strand';
+  const subStrand = trimValue(data.subStrand) || 'Sub-strand';
+  const teacher = trimValue(data.teacherName) || 'Teacher';
+  const outcomes = trimValue(data.learningOutcomes) || 'Learning outcome not added.';
+  const inquiry = trimValue(data.inquiryQuestion) || 'Key inquiry question not added.';
+  const resources = trimValue(data.resources) || 'Resources not added.';
+  const methods = trimValue(data.methods) || 'Methods not added.';
+  const differentiation = trimValue(data.differentiation) || 'Differentiation not added.';
+  const assessment = trimValue(data.assessment) || 'Assessment strategy not added.';
+  const reflection = trimValue(data.reflection) || 'Reflection not added.';
+
+  return `LESSON PLAN\n==================================================\nSchool: Kenya Teacher Toolkit\nTeacher: ${teacher}\nClass: ${className}\nSubject: ${subject}\nTerm: ${term}\nWeek/Cycle: ${week}\nStrand: ${strand}\nSub-strand: ${subStrand}\nLesson title: ${title}\n\n1. Learning outcomes\n${outcomes}\n\n2. Key inquiry question\n${inquiry}\n\n3. Learning resources\n${resources}\n\n4. Learning experiences / teaching and learning activities\n${methods}\n\n5. Differentiation and inclusion\n${differentiation}\n\n6. Assessment and evidence of learning\n${assessment}\n\n7. Reflection and next steps\n${reflection}`;
+}
+
+function buildLessonNotes(data) {
+  const subject = trimValue(data.subject) || 'Subject';
+  const title = trimValue(data.lessonTitle) || 'Lesson';
+  const className = trimValue(data.className) || 'Class';
+  const teacher = trimValue(data.teacherName) || 'Teacher';
+  const methods = trimValue(data.methods) || 'Learning experiences not added.';
+  const outcomes = trimValue(data.learningOutcomes) || 'Learning outcome not added.';
+  const reflection = trimValue(data.reflection) || 'Reflection not yet captured.';
+
+  return `LESSON NOTES\n==================================================\nTeacher: ${teacher}\nClass: ${className}\nSubject: ${subject}\nLesson title: ${title}\n\nObjectives:\n${outcomes}\n\nLesson development:\n${methods}\n\nImportant teaching points:\n- Ensure learners are active and engaged in the task.\n- Link concept to real-life classroom contexts.\n- Use competency-based activities to reinforce the learning outcome.\n\nReflection:\n${reflection}`;
+}
+
+function buildSchemeOfWork(data) {
+  const subject = trimValue(data.subject) || 'Subject';
+  const className = trimValue(data.className) || 'Class';
+  const term = trimValue(data.term) || 'Term';
+  const strand = trimValue(data.strand) || 'Strand';
+  const subStrand = trimValue(data.subStrand) || 'Sub-strand';
+  const title = trimValue(data.lessonTitle) || 'Lesson';
+  const teacher = trimValue(data.teacherName) || 'Teacher';
+
+  const weeks = [
+    'Week 1', 'Week 2', 'Week 3', 'Week 4',
+    'Week 5', 'Week 6', 'Week 7', 'Week 8'
+  ];
+
+  const rows = weeks.map((week, index) => `${week}: ${strand} (${subStrand}) — ${title} ${index + 1}; Learning activities, assessment and reflection for ${subject}.`).join('\n');
+
+  return `SCHEME OF WORK\n==================================================\nTeacher: ${teacher}\nClass: ${className}\nSubject: ${subject}\nTerm: ${term}\n\nStrand: ${strand}\nSub-strand: ${subStrand}\n\n${rows}`;
+}
+
+function buildRecordOfWork(data) {
+  const subject = trimValue(data.subject) || 'Subject';
+  const className = trimValue(data.className) || 'Class';
+  const term = trimValue(data.term) || 'Term';
+  const week = trimValue(data.week) || 'Week';
+  const title = trimValue(data.lessonTitle) || 'Lesson';
+  const strand = trimValue(data.strand) || 'Strand';
+  const assessment = trimValue(data.assessment) || 'Assessment not specified.';
+  const reflection = trimValue(data.reflection) || 'Reflection not specified.';
+
+  return `RECORD OF WORK\n==================================================\nClass: ${className}\nSubject: ${subject}\nTerm: ${term}\nWeek: ${week}\n\nLesson title: ${title}\nStrand: ${strand}\n\nContent covered:\n- ${title}\n- Key points connected to the competency\n\nAssessment activities:\n${assessment}\n\nRemarks:\n${reflection}`;
+}
+
+function buildReportCard(data) {
+  const learner = trimValue(data.learnerName) || 'Learner';
+  const className = trimValue(data.reportClass) || 'Class';
+  const term = trimValue(data.reportTerm) || 'Term';
+  const teacher = trimValue(data.reportTeacher) || 'Teacher';
+  const rawScores = trimValue(data.subjectScores) || '';
+
+  const scoreEntries = rawScores
+    .split(',')
+    .map((pair) => pair.trim())
+    .filter(Boolean)
+    .map((pair) => {
+      const [subject, value] = pair.split('=').map((part) => part.trim());
+      if (!subject || value === undefined) return null;
+      const score = Number(value);
+      const performance = calculatePerformance(score);
+      return { subject, score, performance };
+    })
+    .filter(Boolean);
+
+  const lines = scoreEntries.length
+    ? scoreEntries.map(({ subject, score, performance }) => `${subject}: ${score}/100 — ${performance.code} (${performance.label})`).join('\n')
+    : 'No subject scores entered.';
+
+  const average = scoreEntries.length
+    ? Math.round(scoreEntries.reduce((sum, entry) => sum + entry.score, 0) / scoreEntries.length)
+    : 0;
+  const overall = calculatePerformance(average);
+
+  return `REPORT CARD\n==================================================\nLearner: ${learner}\nClass: ${className}\nTerm: ${term}\nTeacher: ${teacher}\n\nPerformance levels adopted in KICD-aligned reporting:\n- EE = Exceeding Expectation\n- ME = Meeting Expectation\n- AE = Approaching Expectation\n- BE = Below Expectation\n\nSubject performance\n${lines}\n\nOverall average: ${average}/100\nOverall performance: ${overall.code} (${overall.label})\n\nTeacher comment: ${overall.code === 'EE' ? 'Outstanding progress. Learner demonstrates strong command of competencies.' : overall.code === 'ME' ? 'Good progress. Learner is meeting the expected curriculum standards.' : overall.code === 'AE' ? 'The learner is progressing and would benefit from additional scaffolding.' : 'Learner requires close support and targeted intervention.'}`;
+}
+
+function renderOutput(data) {
+  const outputGrid = document.getElementById('outputGrid');
+  const docs = [
+    { title: 'Lesson Plan', content: buildLessonPlan(data) },
+    { title: 'Lesson Notes', content: buildLessonNotes(data) },
+    { title: 'Scheme of Work', content: buildSchemeOfWork(data) },
+    { title: 'Record of Work', content: buildRecordOfWork(data) },
+    { title: 'Report Card', content: buildReportCard(document.getElementById('reportCardForm') ? Object.fromEntries(new FormData(document.getElementById('reportCardForm')).entries()) : {}) }
+  ];
+
+  outputGrid.innerHTML = docs.map((doc) => `
+    <article class="output-card">
+      <h3>${doc.title}</h3>
+      <pre>${escapeHtml(doc.content)}</pre>
+    </article>
+  `).join('');
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function saveDraft() {
+  const formData = Object.fromEntries(new FormData(document.getElementById('curriculumForm')).entries());
+  state.drafts = state.drafts || [];
+  state.drafts.unshift({ ...formData, savedAt: new Date().toISOString() });
+  if (state.drafts.length > 10) state.drafts = state.drafts.slice(0, 10);
+  saveState();
+  alert('Draft saved locally on this device.');
+}
+
+function handleCurriculumSubmit(event) {
   event.preventDefault();
-  const form = event.currentTarget;
-  const data = Object.fromEntries(new FormData(form).entries());
-
-  const entry = {
-    id: data.id || crypto.randomUUID(),
-    ...data
-  };
-
-  const index = state.reports.findIndex((item) => item.id === entry.id);
-  if (index >= 0) state.reports[index] = entry;
-  else state.reports.unshift(entry);
-
-  saveState();
-  renderDashboard();
-  renderLists();
-  form.reset();
-  alert('Learner report saved successfully.');
+  const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+  renderOutput(data);
 }
 
-function clearForm(formId) {
-  const form = document.getElementById(formId);
-  if (!form) return;
-  form.reset();
-  if (formId === 'assessmentForm') {
-    $('#scored').value = '32';
-    $('#total').value = '40';
-  }
-  updateAssessmentPreview();
-}
+function handleReportSubmit(event) {
+  event.preventDefault();
+  const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+  renderOutput(Object.fromEntries(new FormData(document.getElementById('curriculumForm')).entries()));
+  const reportCard = buildReportCard(data);
 
-function editLesson(id) {
-  const lesson = state.lessons.find((item) => item.id === id);
-  if (!lesson) return;
-  syncForm('lessonForm', lesson);
-  window.location.hash = '#lesson-planner';
-}
+  const outputGrid = document.getElementById('outputGrid');
+  const reportCardCard = document.createElement('article');
+  reportCardCard.className = 'output-card';
+  reportCardCard.innerHTML = `<h3>Report Card</h3><pre>${escapeHtml(reportCard)}</pre>`;
 
-function deleteLesson(id) {
-  state.lessons = state.lessons.filter((item) => item.id !== id);
-  saveState();
-  renderDashboard();
-  renderLists();
-}
-
-function editAssessment(id) {
-  const assessment = state.assessments.find((item) => item.id === id);
-  if (!assessment) return;
-  syncForm('assessmentForm', assessment);
-  updateAssessmentPreview();
-  window.location.hash = '#assessment';
-}
-
-function deleteAssessment(id) {
-  state.assessments = state.assessments.filter((item) => item.id !== id);
-  saveState();
-  renderDashboard();
-  renderLists();
-}
-
-function editReport(id) {
-  const report = state.reports.find((item) => item.id === id);
-  if (!report) return;
-  syncForm('reportForm', report);
-  window.location.hash = '#reports';
-}
-
-function deleteReport(id) {
-  state.reports = state.reports.filter((item) => item.id !== id);
-  saveState();
-  renderDashboard();
-  renderLists();
+  const existingCard = Array.from(outputGrid.querySelectorAll('.output-card'));
+  if (existingCard[4]) existingCard[4].replaceWith(reportCardCard);
+  else outputGrid.appendChild(reportCardCard);
 }
 
 function exportWorkspace() {
+  const curriculum = Object.fromEntries(new FormData(document.getElementById('curriculumForm')).entries());
+  const report = Object.fromEntries(new FormData(document.getElementById('reportCardForm')).entries());
   const payload = {
     app: 'Kenya Teacher Toolkit',
-    version: 1,
     exportedAt: new Date().toISOString(),
-    data: state
+    data: { curriculum, report, drafts: state.drafts || [] }
   };
+
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  const href = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  link.href = href;
+  link.href = url;
   link.download = 'kenya-teacher-toolkit-export.json';
   link.click();
-  URL.revokeObjectURL(href);
+  URL.revokeObjectURL(url);
   alert('Workspace exported successfully.');
 }
 
@@ -326,101 +312,77 @@ function importWorkspace(file) {
     try {
       const json = JSON.parse(reader.result);
       const imported = json?.data || json;
-      if (!imported || typeof imported !== 'object') throw new Error('Invalid file');
+      if (!imported) throw new Error('Invalid file');
 
-      state.lessons = Array.isArray(imported.lessons) ? imported.lessons : [];
-      state.assessments = Array.isArray(imported.assessments) ? imported.assessments : [];
-      state.reports = Array.isArray(imported.reports) ? imported.reports : [];
+      if (imported.curriculum) {
+        const form = document.getElementById('curriculumForm');
+        Object.entries(imported.curriculum).forEach(([key, value]) => {
+          const field = form.elements.namedItem(key);
+          if (field) field.value = value;
+        });
+      }
 
-      saveState();
-      renderDashboard();
-      renderLists();
+      if (imported.report) {
+        const form = document.getElementById('reportCardForm');
+        Object.entries(imported.report).forEach(([key, value]) => {
+          const field = form.elements.namedItem(key);
+          if (field) field.value = value;
+        });
+      }
+
+      if (Array.isArray(imported.drafts)) {
+        state.drafts = imported.drafts;
+        saveState();
+      }
+
+      renderOutput(Object.fromEntries(new FormData(document.getElementById('curriculumForm')).entries()));
       alert('Workspace imported successfully.');
     } catch {
-      alert('The selected file is not a valid Kenya Teacher Toolkit export.');
+      alert('This file is not a valid Kenya Teacher Toolkit export.');
     }
   };
   reader.readAsText(file);
 }
 
-function bindEventHandlers() {
-  $('#lessonForm').addEventListener('submit', saveLesson);
-  $('#assessmentForm').addEventListener('submit', saveAssessment);
-  $('#reportForm').addEventListener('submit', saveReport);
-
-  $('#clearLessonForm').addEventListener('click', () => clearForm('lessonForm'));
-  $('#clearAssessmentForm').addEventListener('click', () => clearForm('assessmentForm'));
-  $('#clearReportForm').addEventListener('click', () => clearForm('reportForm'));
-
-  $('#printDashboard').addEventListener('click', () => window.print());
-  $('#printLessonForm').addEventListener('click', () => {
-    const form = $('#lessonForm');
-    if (!form.reportValidity()) return;
-    window.print();
-  });
-  $('#printReportForm').addEventListener('click', () => {
-    const form = $('#reportForm');
-    if (!form.reportValidity()) return;
-    window.print();
-  });
-
-  $('#calculateAssessment').addEventListener('click', () => {
-    const form = $('#assessmentForm');
-    if (!form.reportValidity()) return;
-    updateAssessmentPreview();
-  });
-
-  $('#scored').addEventListener('input', updateAssessmentPreview);
-  $('#total').addEventListener('input', updateAssessmentPreview);
-
-  $('#exportBtn').addEventListener('click', exportWorkspace);
-  $('#importBtn').addEventListener('click', () => $('#importInput').click());
-  $('#importInput').addEventListener('change', (event) => {
-    const [file] = event.target.files;
+function bindEvents() {
+  document.getElementById('curriculumForm').addEventListener('submit', handleCurriculumSubmit);
+  document.getElementById('reportCardForm').addEventListener('submit', handleReportSubmit);
+  document.getElementById('saveDraft').addEventListener('click', saveDraft);
+  document.getElementById('exportBtn').addEventListener('click', exportWorkspace);
+  document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importInput').click());
+  document.getElementById('importInput').addEventListener('change', (event) => {
+    const file = event.target.files?.[0];
     if (file) importWorkspace(file);
     event.target.value = '';
   });
 
-  $('#menuButton').addEventListener('click', () => {
-    $('#mainNav').classList.toggle('open');
+  document.getElementById('printDashboard').addEventListener('click', () => window.print());
+  document.getElementById('printGenerator').addEventListener('click', () => window.print());
+  document.getElementById('printReportCard').addEventListener('click', () => window.print());
+
+  document.getElementById('menuButton').addEventListener('click', () => {
+    document.getElementById('mainNav').classList.toggle('open');
   });
 
   document.querySelectorAll('#mainNav a').forEach((link) => {
-    link.addEventListener('click', () => $('#mainNav').classList.remove('open'));
+    link.addEventListener('click', () => document.getElementById('mainNav').classList.remove('open'));
   });
-
-  document.addEventListener('click', (event) => {
-    const lessonEdit = event.target.dataset.editLesson;
-    const lessonDelete = event.target.dataset.deleteLesson;
-    const assessmentEdit = event.target.dataset.editAssessment;
-    const assessmentDelete = event.target.dataset.deleteAssessment;
-    const reportEdit = event.target.dataset.editReport;
-    const reportDelete = event.target.dataset.deleteReport;
-
-    if (lessonEdit) editLesson(lessonEdit);
-    if (lessonDelete) deleteLesson(lessonDelete);
-    if (assessmentEdit) editAssessment(assessmentEdit);
-    if (assessmentDelete) deleteAssessment(assessmentDelete);
-    if (reportEdit) editReport(reportEdit);
-    if (reportDelete) deleteReport(reportDelete);
-  });
-}
-
-function renderDashboard() {
-  updateStats();
-  renderLists();
 }
 
 function init() {
-  updateAssessmentPreview();
-  renderDashboard();
-  bindEventHandlers();
+  updateSubjectCount();
+  buildBandSelector();
+  populateSubjects();
+  renderOutput(Object.fromEntries(new FormData(document.getElementById('curriculumForm')).entries()));
+  bindEvents();
 }
 
 window.KenyaTeacherToolkit = {
-  calculateScore: (scored, total) => calculatePercentage(scored, total),
-  getPerformanceLabel,
-  state
+  curriculumData,
+  calculatePerformance,
+  buildReportCard,
+  buildLessonPlan,
+  buildSchemeOfWork
 };
 
 init();

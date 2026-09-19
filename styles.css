@@ -1,244 +1,111 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0f766e" />
-  <title>Kenya Teacher Toolkit</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand-wrap">
-      <a class="brand" href="#dashboard" aria-label="Kenya Teacher Toolkit home">
-        <span class="brand-mark">KT</span>
-        <span class="brand-text">Kenya Teacher<br /><strong>Toolkit</strong></span>
-      </a>
-    </div>
-
-    <button class="menu-button" id="menuButton" aria-label="Toggle navigation">☰</button>
-
-    <nav id="mainNav" aria-label="Main navigation">
-      <a href="#dashboard">Dashboard</a>
-      <a href="#lesson-planner">Lesson planner</a>
-      <a href="#assessment">Assessment</a>
-      <a href="#reports">Reports</a>
-      <button class="nav-action" id="exportBtn" type="button">Export</button>
-      <button class="nav-action secondary" id="importBtn" type="button">Import</button>
-      <input id="importInput" type="file" accept="application/json,.json" hidden />
-    </nav>
-  </header>
-
-  <main>
-    <section class="section hero" id="dashboard">
-      <div class="hero-copy-block">
-        <p class="eyebrow">CBC / CBE classroom companion</p>
-        <h1>Teach smarter, plan faster, track progress clearly.</h1>
-        <p>
-          A complete teaching workspace for Kenyan schools, built for lesson planning,
-          continuous assessment, classroom reporting and easy print-outs.
-        </p>
-        <div class="hero-actions">
-          <a class="button primary" href="#lesson-planner">Start a lesson</a>
-          <button class="button ghost" id="printDashboard" type="button">Print summary</button>
-        </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>Kenya Teacher Toolkit | KICD CBE</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-wrap">
+        <a href="#dashboard" class="brand">
+          <span class="brand-mark">KT</span>
+          <span class="brand-text">Kenya Teacher<br /><strong>Toolkit</strong></span>
+        </a>
       </div>
 
-      <div class="hero-panel">
-        <p class="panel-tag">Today’s focus</p>
-        <h2>Learning outcomes first.</h2>
-        <p>
-          Design activities that help every learner demonstrate understanding and confidence.
-        </p>
-        <ul class="mini-list">
-          <li>Lesson planning</li>
-          <li>Assessment tracking</li>
-          <li>Reports and print-ready summaries</li>
-        </ul>
-      </div>
-    </section>
+      <button class="menu-button" id="menuButton" aria-label="Toggle navigation">☰</button>
 
-    <section class="section stats-section">
-      <div class="stats-grid">
-        <article class="stat-card">
-          <span class="stat-label">Lesson plans</span>
-          <strong id="statLessons">0</strong>
-        </article>
-        <article class="stat-card">
-          <span class="stat-label">Assessments</span>
-          <strong id="statAssessments">0</strong>
-        </article>
-        <article class="stat-card">
-          <span class="stat-label">Reports</span>
-          <strong id="statReports">0</strong>
-        </article>
-        <article class="stat-card">
-          <span class="stat-label">Average score</span>
-          <strong id="statAverage">0%</strong>
-        </article>
-      </div>
-    </section>
+      <nav id="mainNav" aria-label="Main navigation">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#generator">Curriculum Studio</a>
+        <a href="#reports">Report Card</a>
+        <button class="nav-action" id="exportBtn" type="button">Export</button>
+        <button class="nav-action secondary" id="importBtn" type="button">Import</button>
+        <input id="importInput" type="file" accept="application/json,.json" hidden />
+      </nav>
+    </header>
 
-    <section id="lesson-planner" class="section workspace-block">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Tool 01</p>
-          <h2>Lesson planner</h2>
-        </div>
-        <button class="button ghost small" id="clearLessonForm" type="button">Clear form</button>
-      </div>
-
-      <div class="two-column-layout">
-        <form class="panel form-grid" id="lessonForm">
-          <label>
-            Teacher name
-            <input name="teacherName" type="text" placeholder="e.g. Jane Wanjiru" />
-          </label>
-          <label>
-            Grade / class
-            <input name="grade" type="text" placeholder="e.g. Grade 4" required />
-          </label>
-          <label>
-            Learning area
-            <input name="area" type="text" placeholder="e.g. Mathematics" required />
-          </label>
-          <label>
-            Topic / strand
-            <input name="topic" type="text" placeholder="e.g. Fractions" required />
-          </label>
-          <label>
-            Date
-            <input name="date" type="date" />
-          </label>
-          <label>
-            Duration
-            <input name="duration" type="text" placeholder="e.g. 40 minutes" />
-          </label>
-          <label class="full-width">
-            Specific learning outcome
-            <textarea name="outcome" rows="3" placeholder="By the end of the lesson, learners should be able to..." required></textarea>
-          </label>
-          <label class="full-width">
-            Introduction and lesson activities
-            <textarea name="activities" rows="4" placeholder="Starter, group work, discussion, practical activities..." required></textarea>
-          </label>
-          <label class="full-width">
-            Resources and assessment strategy
-            <textarea name="resources" rows="3" placeholder="Textbooks, counters, oral questions, exit ticket, observation checklist..."></textarea>
-          </label>
-
-          <div class="full-width form-actions">
-            <button class="button primary" type="submit">Save lesson plan</button>
-            <button class="button ghost" type="button" id="printLessonForm">Print lesson plan</button>
+    <main>
+      <section class="section hero" id="dashboard">
+        <div class="hero-copy">
+          <p class="eyebrow">KICD-aligned CBC/CBE toolbox</p>
+          <h1>Curriculum planning for every Kenyan classroom.</h1>
+          <p>
+            Build lesson plans, notes, schemes of work, records of work and report cards for the latest competency-based education structure in Kenya.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#generator">Open curriculum studio</a>
+            <button class="button ghost" id="printDashboard" type="button">Print summary</button>
           </div>
-        </form>
-
-        <aside class="panel side-panel">
-          <div class="panel-header">
-            <h3>Saved lesson plans</h3>
-            <span id="lessonCountBadge" class="badge">0</span>
-          </div>
-          <div id="lessonPlanList" class="list-stack"></div>
-        </aside>
-      </div>
-    </section>
-
-    <section id="assessment" class="section workspace-block">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Tool 02</p>
-          <h2>Assessment tracker</h2>
         </div>
-        <button class="button ghost small" id="clearAssessmentForm" type="button">Clear form</button>
-      </div>
 
-      <div class="two-column-layout">
-        <form class="panel form-grid" id="assessmentForm">
+        <div class="hero-panel">
+          <p class="panel-tag">KICD grade bands</p>
+          <h2>Four curriculum levels</h2>
+          <ul class="mini-list">
+            <li>Lower Primary: Grade 1–3</li>
+            <li>Upper Primary: Grade 4–6</li>
+            <li>Junior School: Grade 7–9</li>
+            <li>Senior School: Grade 10–13</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section stats-section">
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span class="stat-label">Grade bands</span>
+            <strong>4</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Core subjects</span>
+            <strong id="subjectCount">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Docs ready</span>
+            <strong>5</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Performance levels</span>
+            <strong>4</strong>
+          </article>
+        </div>
+      </section>
+
+      <section id="generator" class="section workspace-block">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Curriculum studio</p>
+            <h2>Generate KICD-aligned lesson documents</h2>
+          </div>
+        </div>
+
+        <div class="band-selector" id="bandSelector" aria-label="Grade band selector"></div>
+
+        <form id="curriculumForm" class="panel form-grid">
           <label>
-            Learner name
-            <input name="learner" type="text" placeholder="e.g. Aisha Njeri" required />
-          </label>
-          <label>
-            Grade / class
-            <input name="grade" type="text" placeholder="e.g. Grade 5" required />
-          </label>
-          <label>
-            Subject / area
-            <input name="subject" type="text" placeholder="e.g. English" required />
-          </label>
-          <label>
-            Assessment type
-            <select name="type">
-              <option>Quiz</option>
-              <option>Test</option>
-              <option>Assignment</option>
-              <option>Project</option>
-              <option>Observation</option>
+            Grade band
+            <select name="gradeBand" id="gradeBand" required>
+              <option value="lowerPrimary">Lower Primary (Grade 1–3)</option>
+              <option value="upperPrimary">Upper Primary (Grade 4–6)</option>
+              <option value="juniorSchool">Junior School (Grade 7–9)</option>
+              <option value="seniorSchool">Senior School (Grade 10–13)</option>
             </select>
           </label>
+
           <label>
-            Marks scored
-            <input id="scored" name="scored" type="number" min="0" step="0.1" value="32" required />
-          </label>
-          <label>
-            Total marks
-            <input id="total" name="total" type="number" min="1" step="0.1" value="40" required />
-          </label>
-          <label class="full-width">
-            Teacher comment
-            <textarea name="comment" rows="3" placeholder="Brief note on learner performance or next support..."></textarea>
+            Class / stream
+            <input name="className" type="text" placeholder="e.g. Grade 4 East" required />
           </label>
 
-          <div class="full-width result-box" aria-live="polite">
-            <div>
-              <span class="result-label">Calculated result</span>
-              <strong id="assessmentResult">80%</strong>
-            </div>
-            <div>
-              <span class="result-label">Performance</span>
-              <strong id="performanceLabel">Exceeds expectations</strong>
-            </div>
-          </div>
-
-          <div class="full-width form-actions">
-            <button class="button primary" type="submit">Save assessment</button>
-            <button class="button ghost" type="button" id="calculateAssessment">Calculate</button>
-          </div>
-        </form>
-
-        <aside class="panel side-panel">
-          <div class="panel-header">
-            <h3>Recent assessments</h3>
-            <span id="assessmentCountBadge" class="badge">0</span>
-          </div>
-          <div id="assessmentList" class="list-stack"></div>
-        </aside>
-      </div>
-    </section>
-
-    <section id="reports" class="section workspace-block">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Tool 03</p>
-          <h2>Learner report builder</h2>
-        </div>
-        <button class="button ghost small" id="clearReportForm" type="button">Clear form</button>
-      </div>
-
-      <div class="two-column-layout">
-        <form class="panel form-grid" id="reportForm">
           <label>
-            Learner name
-            <input name="learner" type="text" placeholder="e.g. Kelvin Ochieng" required />
+            Subject
+            <select name="subject" id="subjectSelect" required></select>
           </label>
-          <label>
-            Grade / class
-            <input name="grade" type="text" placeholder="e.g. Grade 3" required />
-          </label>
-          <label>
-            Subject / area
-            <input name="subject" type="text" placeholder="e.g. Science" required />
-          </label>
+
           <label>
             Term
             <select name="term">
@@ -247,41 +114,139 @@
               <option>Term 3</option>
             </select>
           </label>
-          <label class="full-width">
-            Strengths observed
-            <textarea name="strengths" rows="3" placeholder="What is the learner doing well?"></textarea>
+
+          <label>
+            Week / cycle
+            <input name="week" type="text" placeholder="e.g. Week 2" />
           </label>
-          <label class="full-width">
-            Next steps / support needed
-            <textarea name="nextSteps" rows="3" placeholder="What should the learner practise next?"></textarea>
+
+          <label>
+            Lesson title
+            <input name="lessonTitle" type="text" placeholder="e.g. Counting and grouping objects" required />
           </label>
-          <label class="full-width">
-            Teacher recommendation
-            <textarea name="recommendation" rows="3" placeholder="A summary for parents / school follow-up..."></textarea>
+
+          <label>
+            Strand
+            <input name="strand" type="text" placeholder="e.g. Numbers and operations" required />
+          </label>
+
+          <label>
+            Sub-strand
+            <input name="subStrand" type="text" placeholder="e.g. Counting in ones and tens" required />
+          </label>
+
+          <label>
+            Teacher name
+            <input name="teacherName" type="text" placeholder="e.g. Jane Wanjiru" />
+          </label>
+
+          <label>
+            Learning outcome(s)
+            <textarea name="learningOutcomes" rows="3" placeholder="By the end of the lesson, learners should be able to..." required></textarea>
+          </label>
+
+          <label>
+            Key inquiry question
+            <textarea name="inquiryQuestion" rows="2" placeholder="What do learners investigate or discover?"></textarea>
+          </label>
+
+          <label>
+            Learning resources
+            <textarea name="resources" rows="2" placeholder="Textbooks, counters, charts, digital tools..."></textarea>
+          </label>
+
+          <label>
+            Teaching methods / learning experiences
+            <textarea name="methods" rows="3" placeholder="Demonstration, group work, game-based learning, discussion..."></textarea>
+          </label>
+
+          <label>
+            Differentiation / inclusion support
+            <textarea name="differentiation" rows="2" placeholder="Support for learners who need remediation and extension tasks..."></textarea>
+          </label>
+
+          <label>
+            Assessment strategy
+            <textarea name="assessment" rows="2" placeholder="Observation checklist, oral questions, exit ticket, practical task..."></textarea>
+          </label>
+
+          <label>
+            Reflection and next step
+            <textarea name="reflection" rows="2" placeholder="What worked? What needs reteaching?"></textarea>
           </label>
 
           <div class="full-width form-actions">
-            <button class="button primary" type="submit">Save report</button>
-            <button class="button ghost" type="button" id="printReportForm">Print report</button>
+            <button class="button primary" type="submit">Generate documents</button>
+            <button class="button ghost" type="button" id="printGenerator">Print preview</button>
+            <button class="button ghost" type="button" id="saveDraft">Save draft</button>
           </div>
         </form>
+      </section>
 
-        <aside class="panel side-panel">
-          <div class="panel-header">
-            <h3>Saved learner reports</h3>
-            <span id="reportCountBadge" class="badge">0</span>
+      <section id="reports" class="section workspace-block">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Report card studio</p>
+            <h2>KICD performance levels</h2>
           </div>
-          <div id="reportList" class="list-stack"></div>
-        </aside>
-      </div>
-    </section>
-  </main>
+        </div>
 
-  <footer>
-    <strong>Kenya Teacher Toolkit</strong>
-    <span>Built for practical CBC/CBE teaching in Kenya</span>
-  </footer>
+        <div class="panel report-card-panel">
+          <form id="reportCardForm" class="form-grid report-form">
+            <label>
+              Learner name
+              <input name="learnerName" type="text" placeholder="e.g. Amina Kimani" required />
+            </label>
 
-  <script src="app.js"></script>
-</body>
+            <label>
+              Class / stream
+              <input name="reportClass" type="text" placeholder="e.g. Grade 5 East" required />
+            </label>
+
+            <label>
+              Term
+              <select name="reportTerm">
+                <option>Term 1</option>
+                <option>Term 2</option>
+                <option>Term 3</option>
+              </select>
+            </label>
+
+            <label>
+              Teacher
+              <input name="reportTeacher" type="text" placeholder="e.g. James Otieno" />
+            </label>
+
+            <label class="full-width">
+              Subject scores (format: Subject=Score, Subject=Score)
+              <textarea name="subjectScores" rows="3" placeholder="Mathematics=85, English=78, Kiswahili=90, Science=82, Social Studies=80"></textarea>
+            </label>
+
+            <div class="full-width form-actions">
+              <button class="button primary" type="submit">Generate report card</button>
+              <button class="button ghost" type="button" id="printReportCard">Print report card</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="section output-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Document output</p>
+            <h2>Ready-to-use classroom documents</h2>
+          </div>
+        </div>
+
+        <div class="output-grid" id="outputGrid"></div>
+      </section>
+    </main>
+
+    <footer>
+      <strong>Kenya Teacher Toolkit</strong>
+      <span>KICD-aligned CBC/CBE planning workspace for Kenyan schools</span>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
 </html>

@@ -1,52 +1,45 @@
 # Kenya Teacher Toolkit
 
-A mobile-friendly, offline-first teaching toolkit for Kenyan classrooms. This app helps teachers:
+A KICD-aligned, mobile-friendly curriculum planning app for Kenyan schools.
 
-- plan lessons aligned to CBC/CBE learning outcomes
-- track continuous assessment and score performance
-- build learner progress reports
-- save everything locally in the browser
-- export and import workspace data as JSON
-- print lesson plans and reports for classroom use
+## What this app includes
 
-## Features
-
-- Lesson planner with learning area, grade, topic, outcome, activities, resources and duration
-- Assessment tracker with percentage calculation and performance feedback
-- Learner report builder for term progress summaries
-- Dashboard with live totals and average score stats
-- Local persistence using `localStorage`
-- JSON export/import for a portable teacher workspace
-- Mobile-friendly, responsive layout
+- Four KICD-style curriculum bands:
+  - Lower Primary: Grade 1–3
+  - Upper Primary: Grade 4–6
+  - Junior School: Grade 7–9
+  - Senior School: Grade 10–13
+- Subject sets for each band
+- Lesson plan generation based on CBC/CBE structure
+- Lesson notes generation
+- Scheme of work generation
+- Record of work generation
+- Report card generation using KICD-aligned performance levels:
+  - EE = Exceeding Expectation
+  - ME = Meeting Expectation
+  - AE = Approaching Expectation
+  - BE = Below Expectation
+- Local browser save/export/import support
+- Print-ready document templates
 
 ## Run locally
 
-This is a dependency-free static app. You can open `index.html` directly in a browser or run a local server:
+This is a dependency-free static web app.
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Then visit:
+Then open:
 
 ```text
 http://localhost:8000
 ```
 
-## Test the score calculator
+## Notes
 
-Open the browser test page:
-
-```text
-http://localhost:8000/tests/
-```
-
-or open `tests/index.html` directly.
-
-## Data model
-
-The app stores lesson plans, assessment entries and learner reports in browser storage. You can export the complete workspace to a JSON file and re-import it later.
+The app is designed as a robust offline-first curriculum workspace. It uses browser local storage and can export/import JSON files for backup and sharing.
 
 ## Suggested next phase
 
-Add a real backend for teacher accounts, school-wide data, PDF export, M-Pesa premium features, and optional AI lesson generation once the privacy and security model is ready.
+Integrate a real backend for school accounts, teacher management, term analytics, and export to PDF/Word once the required privacy, security and compliance model is ready.
