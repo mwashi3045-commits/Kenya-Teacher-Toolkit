@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kenya Teacher Toolkit tests</title><style>body{font:16px system-ui;max-width:700px;margin:40px auto;padding:0 20px;color:#17343b}li{padding:8px;color:#176b52}li.fail{color:#a22}.summary{font-weight:700;margin:20px 0}</style></head>
+<body><h1>Kenya Teacher Toolkit tests</h1><p>Small dependency-free smoke tests for the score calculator. Open this file in a browser.</p><div class="summary" id="summary"></div><ol id="results"></ol><script>
+const results = document.querySelector('#results'); let passed = 0; let failed = 0;
+function test(name, assertion) { const item = document.createElement('li'); try { assertion(); item.textContent = `PASS — ${name}`; passed++; } catch (error) { item.className = 'fail'; item.textContent = `FAIL — ${name}: ${error.message}`; failed++; } results.append(item); }
+function equal(actual, expected) { if (actual !== expected) throw new Error(`expected ${expected}, received ${actual}`); }
+</script><script src="../app.js"></script><script>
+const calculateScore = window.KenyaTeacherToolkit.calculateScore;
+test('calculates a percentage', () => equal(calculateScore(32, 40).percentage, 80));
+test('accepts zero as a valid score', () => equal(calculateScore(0, 20).percentage, 0));
+test('caps scores above the total at 100 percent', () => equal(calculateScore(25, 20).percentage, 100));
+test('rejects a zero total', () => equal(calculateScore(5, 0).valid, false));
+test('rejects negative scores', () => equal(calculateScore(-1, 10).valid, false));
+document.querySelector('#summary').textContent = `${passed} passed, ${failed} failed`;
+</script></body></html>
