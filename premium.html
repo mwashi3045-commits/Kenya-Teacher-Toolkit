@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher Toolkit Premium</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="section">
+    <p class="eyebrow">Kenya Teacher Toolkit</p>
+    <h1>Get your first 3 documents free</h1>
+    <p>Try three lesson-plan documents this week. Pay KSh 100 by M-Pesa to unlock continued document generation for 30 days.</p>
+    <div class="panel stacked-form">
+      <label>Safaricom phone number<input id="paymentPhone" type="tel" placeholder="0712345678" required></label>
+      <button id="checkAccess" class="btn secondary" type="button">Check free access</button>
+      <button id="payNow" class="btn primary" type="button">Pay KSh 100 by M-Pesa</button>
+      <p id="paymentStatus" class="ai-output" aria-live="polite"></p>
+    </div>
+  </main>
+  <script>
+    const API = window.TOOLKIT_API_URL || 'http://localhost:8787';
+    const phone = () => document.getElementById('paymentPhone').value.trim();
+    const status = (message) => { document.getElementById('paymentStatus').textContent = message; };
+    document.getElementById('checkAccess').addEventListener('click', async () => {
+      if (!phone()) return status('Enter your Safaricom number first.');
+      const response = await fetch(`${API}/api/access/${encodeURIComponent(phone())}`);
+      const data = await response.json();
+      status(data.premium ? 'Premium access is active.' : `${data.freeRemaining} free document(s) remaining.`);
+    });
+    document.getElementById('payNow').addEventListener('click', async () => {
+      if (!phone()) return status('Enter your Safaricom number first.');
+      status('Starting M-Pesa request…');
+      const response = await fetch(`${API}/api/payments/stk-push`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone() }) });
+      const data = await response.json();
+      status(response.ok ? data.customerMessage : (data.error || 'Payment could not be started.'));
+    });
+  </script>
+</body>
+</html>
