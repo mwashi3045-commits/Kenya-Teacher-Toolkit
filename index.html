@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f766e">
+  <title>Kenya Teacher Toolkit</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#dashboard" aria-label="Kenya Teacher Toolkit home"><span class="brand-mark">KT</span><span>Kenya Teacher<br><strong>Toolkit</strong></span></a>
+    <button class="menu-button" id="menuButton" aria-label="Toggle navigation">☰</button>
+    <nav id="mainNav"><a href="#dashboard">Dashboard</a><a href="#lesson-planner">Lesson planner</a><a href="#assessment">Assessment</a><a href="#reports">Reports</a></nav>
+  </header>
+
+  <main>
+    <section class="hero" id="dashboard">
+      <div><p class="eyebrow">CBC / CBE classroom companion</p><h1>Plan less. Teach with confidence.</h1><p class="hero-copy">Simple, practical tools made for Kenyan teachers. Create lesson plans, calculate scores and prepare learner reports from one friendly workspace.</p><div class="hero-actions"><a class="button primary" href="#lesson-planner">Create a lesson plan <span>→</span></a><button class="button ghost" id="printDashboard">Print workspace</button></div></div>
+      <div class="hero-card"><span class="sun">✦</span><p>Today’s teaching tip</p><strong>Start with the learning outcome, then choose activities that let every learner show what they know.</strong><small>Aligned to competency-based learning</small></div>
+    </section>
+
+    <section class="section" aria-labelledby="tools-title"><div class="section-heading"><div><p class="eyebrow">Your workspace</p><h2 id="tools-title">Everything you need for the day</h2></div><span class="saved-status" id="savedStatus">All changes saved locally</span></div>
+      <div class="tool-grid">
+        <a class="tool-card teal" href="#lesson-planner"><span class="icon">✎</span><h3>Lesson planner</h3><p>Build clear, learner-centred lessons with outcomes, activities and resources.</p><span class="card-link">Start planning →</span></a>
+        <a class="tool-card orange" href="#assessment"><span class="icon">✓</span><h3>Assessment tools</h3><p>Calculate scores and percentages quickly for tests and continuous assessment.</p><span class="card-link">Calculate scores →</span></a>
+        <a class="tool-card purple" href="#reports"><span class="icon">▤</span><h3>Learner reports</h3><p>Turn your notes into a clear progress summary ready to print or share.</p><span class="card-link">Create a report →</span></a>
+      </div>
+    </section>
+
+    <section class="workspace section" id="lesson-planner"><div class="section-heading"><div><p class="eyebrow">Tool 01</p><h2>Lesson planner</h2></div><button class="button ghost small" data-clear="lessonForm">Clear form</button></div>
+      <form class="panel form-grid" id="lessonForm"><label>Learning area<input name="area" placeholder="e.g. Mathematics" required></label><label>Grade / class<input name="grade" placeholder="e.g. Grade 4" required></label><label>Strand / topic<input name="topic" placeholder="e.g. Fractions" required></label><label>Date<input type="date" name="date"></label><label class="wide">Specific learning outcome<textarea name="outcome" rows="3" placeholder="By the end of the lesson, learners should be able to..." required></textarea></label><label>Introduction & activities<textarea name="activities" rows="5" placeholder="Starter, group work, discussion..." required></textarea></label><label>Resources & assessment<textarea name="resources" rows="5" placeholder="Learning resources and how you will check understanding"></textarea></label><div class="wide form-actions"><button class="button primary" type="submit">Save lesson plan</button><button class="button ghost" type="button" data-print="lessonForm">Print lesson plan</button></div></form>
+    </section>
+
+    <section class="workspace section" id="assessment"><div class="section-heading"><div><p class="eyebrow">Tool 02</p><h2>Score calculator</h2></div></div><div class="panel calculator"><div class="calc-inputs"><label>Marks scored<input id="scored" type="number" min="0" value="32"></label><span class="slash">/</span><label>Total marks<input id="total" type="number" min="1" value="40"></label><button class="button primary" id="calculate" type="button">Calculate</button></div><div class="result" aria-live="polite"><span id="percentage">80%</span><div><strong id="gradeResult">Exceeds expectations</strong><small id="scoreMessage">Keep encouraging this learner’s progress.</small></div></div></div></section>
+
+    <section class="workspace section" id="reports"><div class="section-heading"><div><p class="eyebrow">Tool 03</p><h2>Learner progress report</h2></div><button class="button ghost small" data-clear="reportForm">Clear form</button></div><form class="panel form-grid" id="reportForm"><label>Learner name<input name="learner" placeholder="e.g. Amani Wanjiku" required></label><label>Grade / class<input name="reportGrade" placeholder="e.g. Grade 4" required></label><label>Learning area<input name="reportArea" placeholder="e.g. English" required></label><label>Term<select name="term"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></label><label class="wide">Strengths observed<textarea name="strengths" rows="3" placeholder="What is the learner doing well?"></textarea></label><label class="wide">Next steps<textarea name="nextSteps" rows="3" placeholder="What should the learner practise next?"></textarea></label><div class="wide form-actions"><button class="button primary" type="submit">Save report</button><button class="button ghost" type="button" data-print="reportForm">Print report</button></div></form></section>
+  </main>
+  <footer><strong>Kenya Teacher Toolkit</strong><span>Built for practical CBC/CBE teaching · Works offline in your browser</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>
